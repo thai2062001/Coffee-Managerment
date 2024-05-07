@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
+import axios from "axios";
 import {
   Button,
   Col,
@@ -23,7 +24,7 @@ const { Item, List } = Form;
 const { Option } = Select;
 const AddStaffForm = ({ onAddData }) => {
   const [open, setOpen] = useState(false);
-  const [ingredientSource, setIngredientSource] = useState([]);
+
   const dispatch = useDispatch();
   //   const ingredientList = useSelector(
   //     (state) => state.ingredient.ingredientList
@@ -38,12 +39,9 @@ const AddStaffForm = ({ onAddData }) => {
     phone_number: "",
     email: "",
     position: "",
-    salary: "",
-    start_date: "",
+    salary: parseFloat("1000.50"),
+    start_date: null,
   });
-  //   useEffect(() => {
-  //     dispatch(fetchIngredientData());
-  //   }, [dispatch]);
 
   const showDrawer = () => {
     setOpen(true);
@@ -63,45 +61,32 @@ const AddStaffForm = ({ onAddData }) => {
       phone_number: "",
       email: "",
       position: "",
-      salary: "",
-      start_date: "",
+      salary: parseFloat("1000.50"),
+      start_date: null,
     });
-  };
-
-  const normFile = (e) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
-  const beforeUpload = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const imageUrl = reader.result;
-      setFormData({
-        ...formData,
-        image_url: imageUrl,
-      });
-    };
-    return false; // Prevent default upload behavior
   };
 
   const handleAdd = async () => {
     // Kiểm tra từng trường dữ liệu riêng lẻ
     console.log("formData:", formData);
     if (
-      formData.drink_name.trim() !== "" &&
-      formData.price.trim() !== "" &&
-      formData.image_url
+      formData.staff_name.trim() !== "" &&
+      formData.gender.trim() !== "" &&
+      formData.birthday.trim() !== "" &&
+      formData.address.trim() !== "" &&
+      formData.phone_number.trim() !== "" &&
+      formData.email.trim() !== "" &&
+      formData.position.trim() !== "" &&
+      formData.salary.trim() !== "" &&
+      formData.start_date.trim() !== ""
     ) {
       try {
         // Gọi API POST để thêm dữ liệu mới
-        const newData = await callAPIPost(
-          path.API_BASE_URL + path.DRINK_API_URL,
+        const response = await axios.post(
+          path.API_BASE_URL + path.STAFF_API_URL,
           formData
         );
+        const newData = response.data; // Dữ liệu trả về từ API
         console.log("New data added:", newData);
         showSuccessNotification("Success", "Addition Completed Successfully");
         resetFormData();
@@ -261,24 +246,25 @@ const AddStaffForm = ({ onAddData }) => {
             </Col>
             <Col span={12}>
               <Form.Item
-                name="potition"
-                label="Potition"
+                name="position"
+                label="Position"
                 rules={[
                   {
                     required: true,
-                    message: "Please choose the Potition",
+                    message: "Please choose the Position",
                   },
                 ]}
               >
                 <Select
-                  placeholder="Please choose the Potition"
-                  onChange={(value) => handleChangeForm("potition", value)}
+                  placeholder="Please choose the Position"
+                  onChange={(value) => handleChangeForm("position", value)}
                 >
                   <Option value="Manager">Manager</Option>
                   <Option value="Staff">Staff</Option>
                 </Select>
               </Form.Item>
             </Col>
+
             <Col span={12}>
               <Item
                 name="salary"

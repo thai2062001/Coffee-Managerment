@@ -6,6 +6,7 @@ import Content1 from "./containers/Public/Content1";
 import Content2 from "./containers/Public/Content2";
 import Staff from "./containers/Public/Staff";
 import Drink from "./containers/Public/Drink";
+import Role from "./containers/Public/Role";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path={path.CONTENT2} element={<Content2 />} />
         <Route path={path.DRINK} element={<Drink />} />
         <Route path={path.STAFF} element={<Staff />} />
+        <Route path={path.ROLE} element={<Role />} />
       </Routes>
     </div>
   );

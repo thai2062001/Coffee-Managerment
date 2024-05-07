@@ -11,7 +11,6 @@ import HeaderLayout from "./HeaderLayout";
 import DrinkTable from "./TableLayout/DrinkTable";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDrinkData } from "../../store/Slice/drinkSlice";
-
 import AddDrinkForm from "./FormLayout/AddDrinkForm";
 import {
   showSuccessNotification,
@@ -24,36 +23,37 @@ const items2 = [
   {
     key: "sub1",
     icon: React.createElement(UserOutlined),
-    label: "Quản lý kho",
+    label: "Manage Storage and tools",
     children: [
-      { key: "1", label: "Quản lý đồ dùng kho" },
-      { key: "2", label: "Xem danh sách" },
-      { key: "3", label: "Cập nhật thông tin" },
-      { key: "4", label: "Xóa nhân viên" },
+      { key: "1", label: "Storage" },
+      { key: "2", label: "tools" },
     ],
   },
   {
     key: "sub2",
     icon: React.createElement(LaptopOutlined),
-    label: "Quản lý menu ",
+    label: "Manage drinks and menus ",
     children: [
-      { key: "5", label: "Quản lý đồ uống" },
-      { key: "6", label: "Quản lý menu" },
+      { key: "5", label: "Drink" },
+      { key: "6", label: "Menu" },
     ],
   },
   {
     key: "sub3",
     icon: React.createElement(NotificationOutlined),
-    label: "Quản lý nhân viên",
-    children: [{ key: "9", label: "Danh sách nhân viên" }],
+    label: "Manage permissions and employees",
+    children: [
+      { key: "9", label: "Employees" },
+      { key: "10", label: "Permission" },
+    ],
   },
   {
     key: "sub4",
     icon: React.createElement(NotificationOutlined),
-    label: "Quản lý Bill",
+    label: "Bill management",
     children: [
-      { key: "10", label: "Quản lý Bill" },
-      { key: "11", label: "Cảnh báo hệ thống" },
+      { key: "11", label: "Bill" },
+      { key: "12", label: "Statistical" },
     ],
   },
 ];
@@ -70,6 +70,9 @@ const Drink = () => {
   useEffect(() => {
     dispatch(fetchDrinkData());
   }, [dispatch]);
+  useEffect(() => {
+    setDataSource(drinkList);
+  }, [drinkList]);
 
   useEffect(() => {
     if (selectedKeys[0] === "5") {
@@ -188,7 +191,7 @@ const Drink = () => {
               </div>
             </div>
             <DrinkTable
-              dataSource={drinkList}
+              dataSource={dataSource}
               onAdd={handleAdd}
               onDelete={handleDelete}
               onSave={handleSave}

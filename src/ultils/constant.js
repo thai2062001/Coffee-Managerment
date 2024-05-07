@@ -7,9 +7,11 @@ export const path = {
   CONTENT2: "/admin/table/content2",
   DRINK: "/admin/table/drink",
   STAFF: "/admin/table/staff",
+  ROLE: "/admin/table/role",
   API_BASE_URL: "http://localhost:5000",
   STAFF_API_URL: "/staff",
   DRINK_API_URL: "/drinks",
   INGREDIENT_API_URL: "/ingredient",
   STORAGE_API_URL: "/storage",
+  ROLE_API_URL: "/role",
 };

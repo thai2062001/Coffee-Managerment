@@ -45,7 +45,6 @@ const callAPIDelete = async (url) => {
 };
 const callAPIPost = async (url, data) => {
   try {
-    console.log("Data sent to server:", data); // Log dữ liệu trước khi gửi đi
     const response = await axios.post(url, data);
     // Trả về dữ liệu từ API nếu thành công
     return response.data;
