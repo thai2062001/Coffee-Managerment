@@ -1,19 +1,50 @@
-// EditRole.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Col, Drawer, Form, Input, Row, Space } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRoleData } from "../../../store/Slice/roleSlice";
+import { path } from "../../../ultils/constant";
+import { callAPINoHead } from "../../../ultils/axiosApi";
+
+import {
+  showFailureNotification,
+  showSuccessNotification,
+} from "../../../ultils/notificationUtils";
 
 const EditRole = ({ onEditData, role_id }) => {
-  const [form] = Form.useForm();
-  const [formData, setFormData] = useState({
-    role_name: "",
-  });
+  const [form] = Form.useForm(); // Sử dụng Form.useForm để lấy form instance
+  const dispatch = useDispatch();
 
-  const onClose = () => {
-    onEditData(null); // Đóng Drawer khi click vào nút "Cancel"
+  const getRoleNameById = (state, roleId) => {
+    const role = state.role.roleList.find((role) => role.role_id === roleId);
+    return role ? role.role_name : null;
   };
 
-  const resetFormData = () => {
-    form.resetFields();
+  const roleName = useSelector((state) => getRoleNameById(state, role_id));
+
+  const [formData, setFormData] = useState({
+    role_name: roleName || "", // Gán giá trị mặc định cho formData
+  });
+
+  useEffect(() => {
+    dispatch(fetchRoleData());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Kiểm tra nếu roleName có giá trị thì mới set giá trị cho formData
+    if (roleName) {
+      setFormData({
+        role_name: roleName,
+      });
+
+      // Sử dụng form.setFieldsValue để cập nhật giá trị của input
+      form.setFieldsValue({
+        role_name: roleName,
+      });
+    }
+  }, [roleName, form]); // Đảm bảo dependency array chứa form
+
+  const onClose = () => {
+    onEditData(null);
   };
 
   const handleChange = (key, value) => {
@@ -21,6 +52,29 @@ const EditRole = ({ onEditData, role_id }) => {
       ...formData,
       [key]: value,
     });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // Gọi hàm callAPI để gửi yêu cầu chỉnh sửa vai trò
+      const apiUrl = `${path.API_BASE_URL}${path.ROLE_API_URL}/${role_id}`;
+      await callAPINoHead(apiUrl, "PATCH", formData);
+      // Cập nhật dữ liệu trên giao diện sau khi chỉnh sửa thành công nếu cần
+      dispatch(fetchRoleData());
+      showSuccessNotification("Success", "Update Completed Successfully");
+      onClose();
+    } catch (error) {
+      // Xử lý lỗi nếu cần
+      showFailureNotification("Error", "Failed to update role");
+      console.error("Failed to edit role:", error);
+    }
+  };
+
+  const resetFormData = () => {
+    setFormData({
+      role_name: "",
+    });
+    form.resetFields();
   };
 
   return (
@@ -40,7 +94,7 @@ const EditRole = ({ onEditData, role_id }) => {
             <Button onClick={onClose}>Cancel</Button>
             <Button
               className="bg-[#5BBCFF]"
-              onClick={resetFormData}
+              onClick={handleSubmit} // Sử dụng handleSubmit khi nhấn nút "Submit"
               type="primary"
             >
               Submit
@@ -57,7 +111,7 @@ const EditRole = ({ onEditData, role_id }) => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="goods_name"
+                name="role_name"
                 label="Name"
                 rules={[
                   {
@@ -66,9 +120,11 @@ const EditRole = ({ onEditData, role_id }) => {
                   },
                 ]}
               >
+                {/* Sử dụng giá trị từ state cho input và xử lý sự kiện onChange */}
                 <Input
                   placeholder="Please enter user name"
-                  onChange={(e) => handleChange("goods_name", e.target.value)}
+                  value={formData.role_name}
+                  onChange={(e) => handleChange("role_name", e.target.value)}
                 />
               </Form.Item>
             </Col>

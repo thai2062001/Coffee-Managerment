@@ -13,8 +13,7 @@ import {
   showFailureNotification,
 } from "../../ultils/notificationUtils";
 import { useDispatch, useSelector } from "react-redux";
-import { callAPINoHead, callAPIDelete } from "../../ultils/axiosApi";
-import { fetchRoleData } from "./../../store/Slice/roleSlice";
+import { fetchRoleData, deleteRoleData } from "./../../store/Slice/roleSlice";
 import RoleTable from "./TableLayout/RoleTable";
 import AddRole from "./FormLayout/AddRole";
 import EditRole from "./FormLayout/EditRole";
@@ -29,7 +28,9 @@ const items2 = [
     label: "Manage Storage and tools",
     children: [
       { key: "1", label: "Storage" },
-      { key: "2", label: "tools" },
+      { key: "2", label: "Coffee Brewing Tools" },
+      { key: "3", label: "Ingredients" },
+      { key: "4", label: "Shop Equipments" },
     ],
   },
   {
@@ -38,7 +39,8 @@ const items2 = [
     label: "Manage drinks and menus ",
     children: [
       { key: "5", label: "Drink" },
-      { key: "6", label: "Menu" },
+      { key: "6", label: "Recipe" },
+      { key: "7", label: "Menu" },
     ],
   },
   {
@@ -48,6 +50,7 @@ const items2 = [
     children: [
       { key: "9", label: "Employees" },
       { key: "10", label: "Permission" },
+      { key: "13", label: "User & Account" },
     ],
   },
   {
@@ -63,12 +66,11 @@ const items2 = [
 
 const Role = () => {
   const [selectedKeys, setSelectedKeys] = useState(["10"]);
-  const [dataSource, setDataSource] = useState();
   const [isEditing, setIsEditing] = useState(false);
   const [editingRoleId, setEditingRoleId] = useState(null);
-
   const dispatch = useDispatch();
   const roleList = useSelector((state) => state.role.roleList);
+  const [dataSource, setDataSource] = useState(roleList);
   const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -79,13 +81,31 @@ const Role = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setDataSource(roleList);
-  }, [roleList]);
+    const keyMap = {
+      1: path.STORAGE,
+      2: path.COFFEETOOLS,
+      3: path.INGREDIENT,
+      4: path.SHOPEQUIPMENT,
+      5: path.DRINK,
+      9: path.STAFF,
+      11: path.BILL,
+      13: path.USER,
+    };
+    const pathLink = keyMap[selectedKeys[0]];
+    if (pathLink) navigate(pathLink);
+  }, [selectedKeys, navigate]);
 
   const handleMenuClick = (e) => {
     const key = e.key;
     setSelectedKeys([key]);
   };
+  useEffect(() => {
+    const successMessage = JSON.parse(localStorage.getItem("successMessage"));
+    if (successMessage) {
+      showSuccessNotification(successMessage.title, successMessage.message);
+      localStorage.removeItem("successMessage"); // Xóa thông báo sau khi đã hiển thị
+    }
+  }, []);
 
   const handleAdd = async (data) => {
     console.log("formData:", data);
@@ -93,7 +113,18 @@ const Role = () => {
       try {
         await dispatch(addRoleData(data));
         console.log("New data added:", data);
-        showSuccessNotification("Success", "Addition Completed Successfully");
+        // Lưu thông báo thành công vào localStorage
+        localStorage.setItem(
+          "successMessage",
+          JSON.stringify({
+            title: "Success",
+            message: "Addition Completed Successfully",
+          })
+        );
+        // Reload trang sau 2 giây
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } catch (error) {
         console.error("Failed to add new data:", error);
         showFailureNotification(
@@ -108,6 +139,13 @@ const Role = () => {
       );
     }
   };
+  // useEffect(() => {
+  //   console.log(roleList, "Updated roleList");
+  // }, [roleList]);
+
+  useEffect(() => {
+    setDataSource(roleList);
+  }, [roleList]);
 
   const handleEdit = (role_id) => {
     console.log(role_id);
@@ -118,8 +156,7 @@ const Role = () => {
   const handleDelete = async (itemId) => {
     console.log(itemId);
     try {
-      await callAPIDelete(`http://localhost:5000/role/${itemId}`);
-      console.log("Role Item deleted successfully!");
+      await dispatch(deleteRoleData(itemId));
       const newData = dataSource.filter((item) => item.role_id !== itemId);
       setDataSource(newData);
       showSuccessNotification("Success", "Role Item deleted successfully!");
@@ -167,7 +204,7 @@ const Role = () => {
             style={{
               background: colorBgContainer,
             }}
-            width={200}
+            width={300}
           >
             <Menu
               onClick={handleMenuClick}

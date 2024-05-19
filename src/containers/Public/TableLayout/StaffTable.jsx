@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button, Form, Input, Popconfirm, Table } from "antd";
 import { createAntTag } from "../../../ultils/tagUtils";
 import LayoutTable from "./LayoutTable";
-
+import { formatDate } from "../../../components/MomentDate";
 const StaffTable = ({ dataSource, onSave, onDelete, onEdit }) => {
   const defaultColumns = [
     {
@@ -28,6 +28,10 @@ const StaffTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "Birthday",
       dataIndex: "birthday",
       editable: false,
+      render: (text) => {
+        // Sử dụng formatDate và hiển thị "N/A" nếu không có ngày
+        return text ? formatDate(text) : "N/A";
+      },
     },
     {
       title: "Address",
@@ -58,6 +62,10 @@ const StaffTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "Start Date",
       dataIndex: "start_date",
       editable: false,
+      render: (text) => {
+        // Sử dụng formatDate và hiển thị "N/A" nếu không có ngày
+        return text ? formatDate(text) : "N/A";
+      },
     },
     {
       title: "Operation",

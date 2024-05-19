@@ -22,10 +22,14 @@ const roleSlice = createSlice({
     addRole(state, action) {
       state.list.push(action.payload);
     },
+    deleteRole(state, action) {
+      state.list = state.list.filter((role) => role.role_id !== action.payload);
+    },
   },
 });
 
-export const { fetchRoleStart, fetchRoleFailure, addRole } = roleSlice.actions;
+export const { fetchRoleStart, fetchRoleFailure, addRole, deleteRole } =
+  roleSlice.actions;
 
 export const fetchRoleSuccess = (data) => ({
   type: "FETCH_ROLE_SUCCESS",
@@ -57,6 +61,17 @@ export const addRoleData = (newRole) => async (dispatch) => {
   } catch (error) {
     // Xử lý lỗi nếu có
     console.error("Error adding role:", error);
+  }
+};
+export const deleteRoleData = (roleId) => async (dispatch) => {
+  try {
+    await callAPINoHead(
+      `${path.API_BASE_URL}${path.ROLE_API_URL}/${roleId}`,
+      "DELETE"
+    );
+    dispatch(deleteRole(roleId));
+  } catch (error) {
+    console.error("Error deleting role:", error);
   }
 };
 

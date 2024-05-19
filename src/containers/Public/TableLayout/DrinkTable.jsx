@@ -22,8 +22,11 @@ const DrinkTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       editable: true,
     },
     {
-      title: "Img",
+      title: "Image",
       dataIndex: "image_url",
+      render: (text) => (
+        <img src={text} alt="image_url" style={{ width: 150, height: 150 }} />
+      ), // Hiển thị ảnh
       editable: false,
     },
     {
@@ -31,7 +34,7 @@ const DrinkTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       dataIndex: "operation",
       render: (_, record) => (
         <div>
-          <a className="mr-2" onClick={() => onEdit(record.storage_id)}>
+          <a className="mr-2" onClick={() => onEdit(record.drink_id)}>
             Edit
           </a>
           <Popconfirm

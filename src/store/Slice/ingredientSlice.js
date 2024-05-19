@@ -36,7 +36,6 @@ export const fetchIngredientData = () => async (dispatch) => {
       path.API_BASE_URL + path.INGREDIENT_API_URL,
       "GET"
     );
-    console.log(response);
     dispatch(fetchIngredientSuccess(response));
   } catch (error) {
     dispatch(fetchIngredientFailure(error.message));

@@ -18,6 +18,7 @@ import {
 } from "../../ultils/notificationUtils";
 import EditForm from "./FormLayout/EditForm";
 import { callAPINoHead, callAPIDelete } from "../../ultils/axiosApi";
+import EditDrink from "./FormLayout/EditDrink";
 const { Header, Content, Footer, Sider } = Layout;
 const items2 = [
   {
@@ -26,7 +27,9 @@ const items2 = [
     label: "Manage Storage and tools",
     children: [
       { key: "1", label: "Storage" },
-      { key: "2", label: "tools" },
+      { key: "2", label: "Coffee Brewing Tools" },
+      { key: "3", label: "Ingredients" },
+      { key: "4", label: "Shop Equipments" },
     ],
   },
   {
@@ -35,7 +38,8 @@ const items2 = [
     label: "Manage drinks and menus ",
     children: [
       { key: "5", label: "Drink" },
-      { key: "6", label: "Menu" },
+      { key: "6", label: "Recipe" },
+      { key: "7", label: "Menu" },
     ],
   },
   {
@@ -45,6 +49,7 @@ const items2 = [
     children: [
       { key: "9", label: "Employees" },
       { key: "10", label: "Permission" },
+      { key: "13", label: "User & Account" },
     ],
   },
   {
@@ -61,6 +66,8 @@ const Drink = () => {
   const [selectedKeys, setSelectedKeys] = useState(["5"]);
   const [dataSource, setDataSource] = useState();
   const dispatch = useDispatch();
+  const [isEditing, setIsEditing] = useState(false);
+  const [edittingDrinkId, setEdittingDrinkId] = useState(null);
   const drinkList = useSelector((state) => state.drink.drinkList);
 
   const navigate = useNavigate();
@@ -75,15 +82,18 @@ const Drink = () => {
   }, [drinkList]);
 
   useEffect(() => {
-    if (selectedKeys[0] === "5") {
-      return;
-    } else if (selectedKeys[0] === "2") {
-      navigate(path.CONTENT2);
-    } else if (selectedKeys[0] === "1") {
-      navigate(path.CONTENT1);
-    } else if (selectedKeys[0] === "9") {
-      navigate(path.STAFF);
-    }
+    const keyMap = {
+      1: path.STORAGE,
+      2: path.COFFEETOOLS,
+      3: path.INGREDIENT,
+      4: path.SHOPEQUIPMENT,
+      9: path.STAFF,
+      10: path.ROLE,
+      11: path.BILL,
+      13: path.USER,
+    };
+    const pathLink = keyMap[selectedKeys[0]];
+    if (pathLink) navigate(pathLink);
   }, [selectedKeys, navigate]);
   const handleAdd = (data) => {
     // Kiểm tra xem formData có dữ liệu không
@@ -98,7 +108,11 @@ const Drink = () => {
     }
   };
 
-  const handleEdit = (drink_id) => {};
+  const handleEdit = (drink_id) => {
+    console.log(drink_id);
+    setEdittingDrinkId(drink_id);
+    setIsEditing(true);
+  };
 
   const handleDelete = async (itemId) => {
     console.log(itemId);
@@ -163,7 +177,7 @@ const Drink = () => {
             style={{
               background: colorBgContainer,
             }}
-            width={200}
+            width={300}
           >
             <Menu
               onClick={handleMenuClick}
@@ -183,7 +197,7 @@ const Drink = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Quản lý kho</span>
+              <span className="text-[28px] font-bold ">Drink</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200">
@@ -197,6 +211,9 @@ const Drink = () => {
               onSave={handleSave}
               onEdit={handleEdit}
             />
+            {isEditing && (
+              <EditDrink drink_id={edittingDrinkId} onEditData={setIsEditing} />
+            )}
           </Content>
         </Layout>
       </Content>

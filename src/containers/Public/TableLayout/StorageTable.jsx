@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button, Form, Input, Popconfirm, Table } from "antd";
 import { createAntTag } from "../../../ultils/tagUtils";
 import LayoutTable from "./LayoutTable";
-
+import { formatDate } from "../../../components/MomentDate";
 const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
   const defaultColumns = [
     {
@@ -20,6 +20,10 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "Arrival Date",
       dataIndex: "arrival_date",
       editable: false,
+      render: (text) => {
+        // Sử dụng formatDate và hiển thị "N/A" nếu không có ngày
+        return text ? formatDate(text) : "N/A";
+      },
     },
     {
       title: "Price",
@@ -41,13 +45,13 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       },
     },
     {
-      title: "User ID",
-      dataIndex: "user_id",
+      title: "Created by",
+      dataIndex: "created_by",
       editable: false,
     },
     {
-      title: "User ID Deleted",
-      dataIndex: "user_id_deleted",
+      title: "Deleted by",
+      dataIndex: "deleted_by",
       editable: false,
     },
     {

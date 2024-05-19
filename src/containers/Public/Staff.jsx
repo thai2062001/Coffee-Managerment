@@ -17,7 +17,13 @@ import EditForm from "./FormLayout/EditForm";
 import StaffTable from "./TableLayout/StaffTable";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStaffData } from "../../store/Slice/staffSlice";
-import { callAPINoHead, callAPIDelete } from "../../ultils/axiosApi";
+import {
+  callAPINoHead,
+  callAPIDelete,
+  callApiUpdate,
+} from "../../ultils/axiosApi";
+import { formatDate } from "../../components/MomentDate";
+import axios from "axios";
 const { Header, Content, Footer, Sider } = Layout;
 const items2 = [
   {
@@ -26,7 +32,9 @@ const items2 = [
     label: "Manage Storage and tools",
     children: [
       { key: "1", label: "Storage" },
-      { key: "2", label: "tools" },
+      { key: "2", label: "Coffee Brewing Tools" },
+      { key: "3", label: "Ingredients" },
+      { key: "4", label: "Shop Equipments" },
     ],
   },
   {
@@ -35,7 +43,8 @@ const items2 = [
     label: "Manage drinks and menus ",
     children: [
       { key: "5", label: "Drink" },
-      { key: "6", label: "Menu" },
+      { key: "6", label: "Recipe" },
+      { key: "7", label: "Menu" },
     ],
   },
   {
@@ -45,6 +54,7 @@ const items2 = [
     children: [
       { key: "9", label: "Employees" },
       { key: "10", label: "Permission" },
+      { key: "13", label: "User & Account" },
     ],
   },
   {
@@ -59,6 +69,8 @@ const items2 = [
 ];
 const Staff = () => {
   const [selectedKeys, setSelectedKeys] = useState(["9"]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingRoleId, setEditingRoleId] = useState(null);
   const [dataSource, setDataSource] = useState();
   const dispatch = useDispatch();
   const staffList = useSelector((state) => state.staff.staffList);
@@ -77,38 +89,61 @@ const Staff = () => {
   }, [staffList]);
 
   useEffect(() => {
-    if (selectedKeys[0] === "9") {
-      return;
-    } else if (selectedKeys[0] === "2") {
-      navigate(path.CONTENT2);
-    } else if (selectedKeys[0] === "1") {
-      navigate(path.CONTENT1);
-    } else if (selectedKeys[0] === "5") {
-      navigate(path.DRINK);
-    } else if (selectedKeys[0] === "10") {
-      navigate(path.ROLE);
-    }
+    const keyMap = {
+      1: path.STORAGE,
+      2: path.COFFEETOOLS,
+      3: path.INGREDIENT,
+      4: path.SHOPEQUIPMENT,
+      5: path.DRINK,
+      11: path.BILL,
+      10: path.ROLE,
+      13: path.USER,
+    };
+    const pathLink = keyMap[selectedKeys[0]];
+    if (pathLink) navigate(pathLink);
   }, [selectedKeys, navigate]);
 
-  const handleAdd = (data) => {
+  const handleAdd = async (data) => {
     // Kiểm tra xem formData có dữ liệu không
-    if (
-      Object.values(data).some(
-        (value) => value !== "" && value !== null && value !== undefined
-      )
-    ) {
-      setDataSource([...dataSource, data]);
-    } else {
-      console.log("Vui lòng điền đầy đủ thông tin trước khi thêm.");
+    const access_Token = localStorage.getItem("access-token");
+    try {
+      console.log(data);
+      // Gọi API POST để thêm dữ liệu mới
+      const response = await axios.post(
+        path.API_BASE_URL + path.STAFF_API_URL,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_Token}`,
+          },
+        }
+      );
+      const newData = response.data; // Dữ liệu trả về từ API
+      console.log("New data added:", newData);
+      showSuccessNotification("Success", "Addition Completed Successfully");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to add new data:", error);
+      showFailureNotification(
+        "Error",
+        "Failed to add new data. Please try again later."
+      );
     }
   };
 
-  const handleEdit = (drink_id) => {};
+  const handleEdit = (staff_id) => {
+    console.log(staff_id);
+    setEditingRoleId(staff_id);
+    setIsEditing(true);
+  };
 
   const handleDelete = async (itemId) => {
     console.log(itemId);
     try {
-      await callAPIDelete(`http://localhost:5000/staff/${itemId}`);
+      await callApiUpdate(`http://localhost:5000/staff/remove/${itemId}`);
       console.log("Staff Item deleted successfully!");
       const newData = dataSource.filter((item) => item.staff_id !== itemId);
       setDataSource(newData);
@@ -161,7 +196,7 @@ const Staff = () => {
             style={{
               background: colorBgContainer,
             }}
-            width={200}
+            width={300}
           >
             <Menu
               onClick={handleMenuClick}
@@ -181,7 +216,7 @@ const Staff = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Quản lý kho</span>
+              <span className="text-[28px] font-bold ">Staff</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200">
@@ -195,6 +230,12 @@ const Staff = () => {
               onSave={handleSave}
               onEdit={handleEdit}
             />
+            {isEditing && (
+              <EditForm
+                staff_id={editingRoleId}
+                onEditData={setIsEditing} // Pass the edit handler function to the EditRole component
+              />
+            )}
           </Content>
         </Layout>
       </Content>

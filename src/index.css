@@ -7,5 +7,51 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Work Sans', sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+
+.fixed-size-image {
+    width: 200px;
+    height: 200px;
+}
+
+
+.site-description-item-profile-wrapper {
+    margin-bottom: 7px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    line-height: 1.5715;
+}
+
+.ant-drawer-body p.site-description-item-profile-p {
+    display: block;
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 16px;
+    line-height: 1.5715;
+}
+
+.site-description-item-profile-p-label {
+    display: inline-block;
+    margin-right: 8px;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+
+.view-bill-detail {
+    color: #1890ff;
+    font-weight: bold;
+    /* Màu chữ */
+    cursor: pointer;
+    /* Biến con trỏ thành pointer khi di chuột qua */
+
+    /* Gạch chân dưới chữ */
+}
+
+.view-bill-detail:hover {
+    color: #40a9ff;
+    text-decoration: underline;
+    /* Thay đổi màu chữ khi di chuột qua */
 }

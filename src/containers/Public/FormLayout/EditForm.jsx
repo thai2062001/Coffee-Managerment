@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -16,35 +16,79 @@ import {
   showSuccessNotification,
 } from "../../../ultils/notificationUtils";
 import { getCurrentDate } from "../../../ultils/dateNowUtils";
-
+import { fetchStaffData } from "../../../store/Slice/staffSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { path } from "../../../ultils/constant";
+import { callAPINoHead } from "../../../ultils/axiosApi";
+import { formatDate } from "../../../components/MomentDate";
 const { Option } = Select;
-const EditForm = ({ onEditData }) => {
-  const [open, setOpen] = useState(false);
+const { Item, List } = Form;
+const EditForm = ({ onEditData, staff_id }) => {
   const [form] = Form.useForm();
-  const [formData, setFormData] = useState({
-    goods_name: "",
-    cost_price: "",
-    goods_unit: "",
-    equipmenttype_id: "",
-    quantity: 1,
-    user_id: 1,
-    user_id_deleted: "null",
-    deleted: 0,
-    arrival_date: getCurrentDate(),
-  });
 
-  const showDrawer = () => {
-    setOpen(true);
+  const dispatch = useDispatch();
+
+  const getStaffById = (state, staffId) => {
+    const staff = state.staff.staffList.find(
+      (staff) => staff.staff_id === staffId
+    );
+    return staff ? staff : null;
   };
 
+  const staffName = useSelector((state) => getStaffById(state, staff_id));
+
+  const [formData, setFormData] = useState({
+    staff_name: staffName ? staffName.staff_name : "",
+    gender: staffName ? staffName.gender : "",
+    birthday: staffName ? formatDate(staffName.birthday) : "",
+    address: staffName ? staffName.address : "",
+    phone_number: staffName ? staffName.phone_number : "",
+    email: staffName ? staffName.email : "",
+    position: staffName ? staffName.position : "",
+    salary: staffName ? staffName.salary : "",
+    start_date: staffName ? formatDate(staffName.start_date) : "",
+  });
+
+  useEffect(() => {
+    // Kiểm tra nếu staffName có giá trị thì mới set giá trị cho formData
+    if (staffName) {
+      setFormData({
+        staff_name: staffName.staff_name,
+        gender: staffName.gender,
+        birthday: formatDate(staffName.birthday),
+        address: staffName.address,
+        phone_number: staffName.phone_number,
+        email: staffName.email,
+        position: staffName.position,
+        salary: staffName.salary,
+        start_date: formatDate(staffName.start_date),
+      });
+
+      // Sử dụng form.setFieldsValue để cập nhật giá trị của input
+      form.setFieldsValue({
+        staff_name: staffName.staff_name,
+        gender: staffName.gender,
+        birthday: formatDate(staffName.birthday),
+        address: staffName.address,
+        phone_number: staffName.phone_number,
+        email: staffName.email,
+        position: staffName.position,
+        salary: staffName.salary,
+        start_date: formatDate(staffName.start_date),
+      });
+    }
+  }, [staffName, form]);
+
+  useEffect(() => {
+    dispatch(fetchStaffData());
+  }, [dispatch]);
+
   const onClose = () => {
-    setOpen(false);
+    onEditData(null);
   };
   const resetFormData = () => {
     form.resetFields();
   };
-
-  const handleEdit = () => {};
 
   const handleChange = (key, value) => {
     setFormData({
@@ -52,22 +96,31 @@ const EditForm = ({ onEditData }) => {
       [key]: value,
     });
   };
+  const handleSubmit = async () => {
+    try {
+      // Gọi hàm callAPI để gửi yêu cầu chỉnh sửa vai trò
+      const apiUrl = `${path.API_BASE_URL}${path.STAFF_API_URL}/${staff_id}`;
+      console.log(formData);
+      await callAPINoHead(apiUrl, "PATCH", formData);
+
+      // Cập nhật dữ liệu trên giao diện sau khi chỉnh sửa thành công nếu cần
+      dispatch(fetchStaffData());
+      showSuccessNotification("Success", "Update Completed Successfully");
+      onClose();
+    } catch (error) {
+      // Xử lý lỗi nếu cần
+      showFailureNotification("Error", "Failed to update Staff");
+      console.error("Failed to edit Staff:", error);
+    }
+  };
 
   return (
     <>
-      <Button
-        className="bg-[#5BBCFF] mb-5"
-        type="primary"
-        onClick={showDrawer}
-        icon={<PlusOutlined />}
-      >
-        Edit Storage
-      </Button>
       <Drawer
-        title="Edit Storage"
+        title="Edit Staff"
         width={720}
         onClose={onClose}
-        visible={open}
+        visible={staff_id !== null}
         styles={{
           body: {
             paddingBottom: 80,
@@ -78,7 +131,7 @@ const EditForm = ({ onEditData }) => {
             <Button onClick={onClose}>Cancel</Button>
             <Button
               className="bg-[#5BBCFF]"
-              onClick={handleEdit}
+              onClick={handleSubmit}
               type="primary"
             >
               Submit
@@ -95,59 +148,69 @@ const EditForm = ({ onEditData }) => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="goods_name"
+                name="staff_name"
                 label="Name"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter user name",
+                    message: "Please enter staff name",
                   },
                 ]}
               >
                 <Input
-                  placeholder="Please enter user name"
-                  onChange={(e) => handleChange("goods_name", e.target.value)}
+                  placeholder="Please enter staff name"
+                  value={formData.staff_name}
+                  onChange={(e) => handleChange("staff_name", e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="goods_unit"
-                label="Unit"
+                name="gender"
+                label="Gender"
                 rules={[
-                  {
-                    required: true,
-                    message: "Please choose the Unit",
-                  },
+                  { required: true, message: "Please choose the gender" },
                 ]}
               >
                 <Select
-                  placeholder="Please choose the Unit"
-                  onChange={(value) => handleChange("goods_unit", value)}
+                  placeholder="Please choose the gender"
+                  value={formData.gender}
+                  onChange={(value) => handleChange("gender", value)}
                 >
-                  <Option value="Kilogram">Kilogram</Option>
-                  <Option value="Gram">Gram</Option>
+                  <Option value="Male">Male</Option>
+                  <Option value="Female">Female</Option>
                 </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="birthday"
+                label="Birthday"
+                rules={[
+                  { required: true, message: "Please select the birthday" },
+                ]}
+              >
+                <Input
+                  type="date"
+                  value={formData.birthday}
+                  onChange={(e) => handleChange("birthday", e.target.value)}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="cost_price"
-                label="Price"
+                name="phone_number"
+                label="Phone Number"
                 rules={[
-                  {
-                    required: true,
-                    message: "Please enter Price",
-                  },
+                  { required: true, message: "Please enter phone number" },
                 ]}
               >
                 <Input
-                  style={{
-                    width: "100%",
-                  }}
-                  addonAfter="VND"
-                  placeholder="Please enter Price"
-                  onChange={(e) => handleChange("cost_price", e.target.value)}
+                  placeholder="Please enter phone number"
+                  value={formData.phone_number}
+                  onChange={(e) => handleChange("phone_number", e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -155,103 +218,78 @@ const EditForm = ({ onEditData }) => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="equipmenttype_id"
-                label="Equipmenttype_id"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please choose  equipmenttype_id",
-                  },
-                ]}
+                name="address"
+                label="Address"
+                rules={[{ required: true, message: "Please enter address" }]}
               >
-                <Select
-                  placeholder="Please choose the equipmenttype_id"
-                  onChange={(value) => handleChange("equipmenttype_id", value)}
-                >
-                  <Option value="0">Ingredient</Option>
-                  <Option value="1">Shop tools</Option>
-                </Select>
+                <Input
+                  placeholder="Please enter address"
+                  value={formData.address}
+                  onChange={(e) => handleChange("address", e.target.value)}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="quantity"
-                label="Quantity"
+                name="email"
+                label="Email"
                 rules={[
-                  {
-                    required: true,
-                    message: "Please enter a quantity",
-                  },
+                  { required: true, message: "Please enter email address" },
                 ]}
+              >
+                <Input
+                  type="email"
+                  placeholder="Please enter email"
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="position"
+                label="Position"
+                rules={[{ required: true, message: "Please enter position" }]}
+              >
+                <Input
+                  placeholder="Please enter position"
+                  value={formData.position}
+                  onChange={(e) => handleChange("position", e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="salary"
+                label="Salary"
+                rules={[{ required: true, message: "Please enter salary" }]}
               >
                 <InputNumber
-                  min={1}
-                  defaultValue={1}
-                  onChange={(value) => handleChange("quantity", value)}
+                  style={{ width: "100%" }}
+                  min={0}
+                  placeholder="Please enter salary"
+                  value={formData.salary}
+                  onChange={(value) => handleChange("salary", value)}
                 />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={10}>
-            <Col span={12}>
-              <Form.Item
-                name="user_id"
-                label="User_ID"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter User_ID",
-                  },
-                ]}
-              >
-                <Input
-                  defaultValue={1}
-                  disabled
-                  placeholder="Please enter User_ID"
-                  onChange={(e) => handleChange("user_id", e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="user_id_deleted"
-                label="User_id_deleted"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter user_id_deleted",
-                  },
-                ]}
-              >
-                <Input
-                  disabled
-                  placeholder="Please enter user_id_deleted"
-                  onChange={(e) =>
-                    handleChange("user_id_deleted", e.target.value)
-                  }
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="deleted"
-                label="Deleted"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter Deleted",
-                  },
-                ]}
-              >
-                <Input
-                  disabled
-                  defaultValue={0}
-                  placeholder="Please enter Deleted"
-                  onChange={(e) => handleChange("deleted", e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Col span={12}>
+            <Form.Item
+              name="start_date"
+              label="Start Date"
+              rules={[{ required: true, message: "Please select start date" }]}
+            >
+              <Input
+                type="date"
+                placeholder="Please select start date"
+                value={formData.start_date}
+                onChange={(e) => handleChange("start_date", e.target.value)}
+              />
+            </Form.Item>
+          </Col>
         </Form>
       </Drawer>
     </>

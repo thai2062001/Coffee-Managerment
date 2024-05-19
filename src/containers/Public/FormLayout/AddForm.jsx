@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -16,20 +17,53 @@ import {
   showSuccessNotification,
 } from "../../../ultils/notificationUtils";
 import { getCurrentDate } from "../../../ultils/dateNowUtils";
-
+import unhashToken from "../../../components/unhashToken";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchEquipmentData } from "../../../store/Slice/equipmentTypeSlice";
+import { fetchStorageData } from "../../../store/Slice/storageSlice";
 const { Option } = Select;
 const AddForm = ({ onAddData }) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
+
+  const equipTypeList = useSelector((state) => state.type.equipType);
+  const storageList = useSelector((state) => state.storage.storageList);
+
+  const [userId, setUserId] = useState("");
+  const access_Token = localStorage.getItem("access-token");
+
+  useEffect(() => {
+    const decodedToken = unhashToken(access_Token);
+    if (decodedToken) {
+      // Thực hiện các hành động với thông tin đã giải mã từ token
+      console.log("Thông tin từ token:", decodedToken);
+      setUserId(decodedToken.user_id);
+    } else {
+      // Xử lý khi không thể giải mã token
+      console.log("Không thể giải mã token");
+    }
+  }, [access_Token]);
+  useEffect(() => {
+    dispatch(fetchEquipmentData());
+  }, [dispatch]);
+
+  const uniqueValues = (arr) => {
+    return arr.filter((value, index, self) => self.indexOf(value) === index);
+  };
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+  const uniqueGoodsUnits = uniqueValues(
+    storageList.map((storage) => storage.goods_unit)
+  );
+
   const [formData, setFormData] = useState({
     goods_name: "",
     cost_price: "",
     goods_unit: "",
     equipmenttype_id: "",
     quantity: 1,
-    user_id: 1,
-    user_id_deleted: "null",
-    deleted: 0,
     arrival_date: getCurrentDate(),
   });
 
@@ -44,27 +78,53 @@ const AddForm = ({ onAddData }) => {
     form.resetFields();
   };
 
-  const handleAdd = () => {
-    // Kiểm tra từng trường dữ liệu riêng lẻ
-    if (
-      formData.goods_name &&
-      formData.cost_price &&
-      formData.goods_unit &&
-      formData.equipmenttype_id &&
-      formData.user_id &&
-      formData.user_id_deleted !== null &&
-      formData.deleted !== null
-    ) {
-      onAddData(formData);
-      showSuccessNotification("Sucess", "Addition Completed Successfully");
-      resetFormData();
-      onClose();
-    } else {
-      showFailureNotification(
-        "Error",
-        "Please provide all necessary information before adding"
-      );
-      console.log(formData);
+  const handleAdd = async () => {
+    try {
+      // Kiểm tra từng trường dữ liệu riêng lẻ
+      if (
+        formData.goods_name &&
+        formData.cost_price &&
+        formData.goods_unit &&
+        formData.equipmenttype_id
+      ) {
+        const url = "http://localhost:5000/storage";
+        const data = formData;
+
+        const response = await axios.post(url, data, {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        localStorage.setItem(
+          "successMessage",
+          JSON.stringify({
+            title: "Success",
+            message: "Addition Completed Successfully",
+          })
+        );
+        // Reload trang sau 2 giây
+
+        // Xử lý phản hồi ở đây nếu cần
+        console.log("Response:", response);
+
+        // Reset form và đóng Drawer
+        resetFormData();
+        onClose();
+
+        // Thông báo thành công nếu cần
+        showSuccessNotification("Success", "Storage added successfully.");
+      } else {
+        showFailureNotification(
+          "Error",
+          "Please provide all necessary information before adding"
+        );
+        console.log(formData);
+      }
+    } catch (error) {
+      // Xử lý lỗi ở đây nếu cần
+      console.error("API call failed:", error);
+      showFailureNotification("Error", "Failed to add storage.");
     }
   };
 
@@ -112,23 +172,6 @@ const AddForm = ({ onAddData }) => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="storage_id"
-                label="ID"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter ID",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Please enter ID"
-                  onChange={(e) => handleChange("storage_id", e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
                 name="goods_name"
                 label="Name"
                 rules={[
@@ -159,8 +202,11 @@ const AddForm = ({ onAddData }) => {
                   placeholder="Please choose the Unit"
                   onChange={(value) => handleChange("goods_unit", value)}
                 >
-                  <Option value="kilogram">Kilogram</Option>
-                  <Option value="Gram">Gram</Option>
+                  {uniqueGoodsUnits.map((unit) => (
+                    <Option key={unit} value={unit}>
+                      {capitalizeFirstLetter(unit)}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -202,8 +248,14 @@ const AddForm = ({ onAddData }) => {
                   placeholder="Please choose the equipmenttype_id"
                   onChange={(value) => handleChange("equipmenttype_id", value)}
                 >
-                  <Option value="0">Ingredient</Option>
-                  <Option value="1">Shop tools</Option>
+                  {equipTypeList.map((item) => (
+                    <Option
+                      key={item.equipmenttype_id}
+                      value={item.equipmenttype_id}
+                    >
+                      {item.equipmenttype_name}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -222,66 +274,6 @@ const AddForm = ({ onAddData }) => {
                   min={1}
                   defaultValue={1}
                   onChange={(value) => handleChange("quantity", value)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={10}>
-            <Col span={12}>
-              <Form.Item
-                name="user_id"
-                label="User_ID"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter User_ID",
-                  },
-                ]}
-              >
-                <Input
-                  defaultValue={1}
-                  disabled
-                  placeholder="Please enter User_ID"
-                  onChange={(e) => handleChange("user_id", e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="user_id_deleted"
-                label="User_id_deleted"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter user_id_deleted",
-                  },
-                ]}
-              >
-                <Input
-                  disabled
-                  placeholder="Please enter user_id_deleted"
-                  onChange={(e) =>
-                    handleChange("user_id_deleted", e.target.value)
-                  }
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="deleted"
-                label="Deleted"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter Deleted",
-                  },
-                ]}
-              >
-                <Input
-                  disabled
-                  defaultValue={0}
-                  placeholder="Please enter Deleted"
-                  onChange={(e) => handleChange("deleted", e.target.value)}
                 />
               </Form.Item>
             </Col>

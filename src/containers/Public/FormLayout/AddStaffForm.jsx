@@ -17,7 +17,11 @@ import {
   showFailureNotification,
   showSuccessNotification,
 } from "../../../ultils/notificationUtils";
-import { callAPINoHead, callAPIPost } from "../../../ultils/axiosApi";
+import {
+  callAPINoHead,
+  callAPIPost,
+  callAPIHead,
+} from "../../../ultils/axiosApi";
 import { useDispatch, useSelector } from "react-redux";
 import { path } from "../../../ultils/constant";
 const { Item, List } = Form;
@@ -51,6 +55,14 @@ const AddStaffForm = ({ onAddData }) => {
     setOpen(false);
   };
 
+  function convertToISO(inputDate) {
+    if (inputDate.trim() !== "") {
+      return new Date(inputDate).toISOString();
+    } else {
+      return "";
+    }
+  }
+
   const resetFormData = () => {
     form.resetFields();
     setFormData({
@@ -68,7 +80,6 @@ const AddStaffForm = ({ onAddData }) => {
 
   const handleAdd = async () => {
     // Kiểm tra từng trường dữ liệu riêng lẻ
-    console.log("formData:", formData);
     if (
       formData.staff_name.trim() !== "" &&
       formData.gender.trim() !== "" &&
@@ -81,14 +92,7 @@ const AddStaffForm = ({ onAddData }) => {
       formData.start_date.trim() !== ""
     ) {
       try {
-        // Gọi API POST để thêm dữ liệu mới
-        const response = await axios.post(
-          path.API_BASE_URL + path.STAFF_API_URL,
-          formData
-        );
-        const newData = response.data; // Dữ liệu trả về từ API
-        console.log("New data added:", newData);
-        showSuccessNotification("Success", "Addition Completed Successfully");
+        onAddData(formData);
         resetFormData();
         onClose();
       } catch (error) {
@@ -194,7 +198,7 @@ const AddStaffForm = ({ onAddData }) => {
                   style={{ width: "100%" }}
                   placeholder="Select Birthday"
                   onChange={(date, dateString) =>
-                    handleChangeForm("birthday", dateString)
+                    handleChangeForm("birthday", convertToISO(dateString))
                   }
                 />
               </Item>
@@ -291,7 +295,7 @@ const AddStaffForm = ({ onAddData }) => {
                   style={{ width: "100%" }}
                   placeholder="Select Start Date"
                   onChange={(date, dateString) =>
-                    handleChangeForm("start_date", dateString)
+                    handleChangeForm("start_date", convertToISO(dateString))
                   }
                 />
               </Item>

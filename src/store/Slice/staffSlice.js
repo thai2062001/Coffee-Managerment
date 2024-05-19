@@ -1,6 +1,6 @@
 // staffReducer.js
 import { createSlice } from "@reduxjs/toolkit";
-import { callAPINoHead } from "../../ultils/axiosApi";
+import { callAPINoHead, callAPIHead } from "../../ultils/axiosApi";
 import { path } from "../../ultils/constant";
 const staffSlice = createSlice({
   name: "staff",
@@ -32,7 +32,7 @@ export const fetchStaffSuccess = (data) => ({
 export const fetchStaffData = () => async (dispatch) => {
   try {
     dispatch(fetchStaffStart());
-    const response = await callAPINoHead(
+    const response = await callAPIHead(
       path.API_BASE_URL + path.STAFF_API_URL,
       "GET"
     );

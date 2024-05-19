@@ -1,45 +1,55 @@
 import React, { useCallback } from "react";
-import logo from "../../assets/logo.png";
-import { Button } from "../../components";
-import TextSpan from "../../components/TextSpan";
-import icons from "../../ultils/icons";
 import { useNavigate } from "react-router-dom";
+import { Button } from "antd"; // Using Ant Design Button component
+import logo from "../../assets/logo.png";
+import logo_new from "../../assets/logo_new.jpg";
+import icons from "../../ultils/icons";
 import { path } from "../../ultils/constant";
+
 const { AiOutlinePlusCircle, IoIosLogIn, AiOutlineUserAdd } = icons;
+
 function Header() {
   const navigate = useNavigate();
+
   const goLogin = useCallback(() => {
-    navigate(path.LOGIN);
-  }, []);
+    navigate("/login");
+  }, [navigate]);
+
   const goHome = useCallback(() => {
     navigate(path.HOME);
-  }, []);
+  }, [navigate]);
+
   return (
-    <div className="w-[100vw] flex items-center justify-around ">
-      <img
-        src={logo}
-        onClick={goHome}
-        alt="logo"
-        className="w-[240px] h-[70px] object-contain cursor-pointer"
-      />
-      <div className="flex items-center gap-1">
-        <ul className="flex items-center gap-10 justify-between mr-10 ">
-          <li className="text-[#000000] text-[18px] cursor-pointer">
-            <a href="#"></a>Home
-          </li>
-          <li className="text-[#000000] text-[18px] cursor-pointer">
-            <a href="#"></a>Manager
-          </li>
-          <li className="text-[#000000] text-[18px] cursor-pointer">
-            <a href="#"></a>Contact
-          </li>
-          <li
-            onClick={goLogin}
-            className="text-[#000000] text-[18px] cursor-pointer"
-          >
-            <a href="#"></a>Login
-          </li>
-        </ul>
+    <div className="w-full bg-white shadow-md py-4">
+      <div className="container mx-auto flex justify-between items-center px-6">
+        <div className="w-[200px]">
+          <img
+            src={logo_new}
+            onClick={goHome}
+            alt="logo"
+            className="h-[80px] cursor-pointer"
+          />
+        </div>
+        <div className="flex items-center gap-8">
+          <ul className="flex items-center gap-8 text-[#7e7e7e]  font-light  text-[18px]  uppercase">
+            <li className="hover:text-[#322C2B]  cursor-pointer">
+              <a href="#">Home</a>
+            </li>
+            <li className="hover:text-[#322C2B] cursor-pointer">
+              <a href="#">Manager</a>
+            </li>
+            <li className="hover:text-[#322C2B] cursor-pointer">
+              <a href="#">About Us</a>
+            </li>
+            <li className="hover:text-[#322C2B] cursor-pointer">
+              <a href="#">Contact</a>
+            </li>
+          </ul>
+        </div>
+
+        <span onClick={goLogin}>
+          <AiOutlineUserAdd className="w-10 h-6 cursor-pointer" />
+        </span>
       </div>
     </div>
   );

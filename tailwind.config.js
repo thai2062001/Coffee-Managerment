@@ -14,6 +14,7 @@ module.exports = {
       backgroundImage: {
         "hero-pattern": "url('/src/assets/banner-log.jpg')",
       },
+
       maxWidth: {
         600: "600px",
       },
