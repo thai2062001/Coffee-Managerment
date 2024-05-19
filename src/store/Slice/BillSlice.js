@@ -30,8 +30,11 @@ const BillSlice = createSlice({
   },
 });
 
-export const { fetchBillStart, fetchBillSuccess, fetchBillFailure, addBill } =
-  BillSlice.actions;
+export const { fetchBillStart, fetchBillFailure, addBill } = BillSlice.actions;
+export const fetchBillSuccess = (data) => ({
+  type: "FETCH_BILL_SUCCESS",
+  payload: data,
+});
 
 // Thunk action để fetch dữ liệu hóa đơn
 export const fetchBillData = () => async (dispatch) => {

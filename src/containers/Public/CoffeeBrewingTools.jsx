@@ -28,6 +28,7 @@ const items2 = [
       { key: "2", label: "Coffee Brewing Tools" },
       { key: "3", label: "Ingredients" },
       { key: "4", label: "Shop Equipments" },
+      { key: "14", label: "Statistical" },
     ],
   },
   {
@@ -78,13 +79,18 @@ const CoffeeBrewingTools = () => {
   useEffect(() => {
     const keyMap = {
       1: path.STORAGE,
+      2: path.COFFEETOOLS,
       3: path.INGREDIENT,
       4: path.SHOPEQUIPMENT,
       5: path.DRINK,
+      6: path.RECIPE,
+      7: path.MENU,
       9: path.STAFF,
       10: path.ROLE,
       11: path.BILL,
+      12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -95,31 +101,9 @@ const CoffeeBrewingTools = () => {
     setSelectedKeys([key]);
   };
 
-  const handleAdd = async (data) => {};
-
   useEffect(() => {
     setDataSource(ToolsList);
   }, [ToolsList]);
-
-  console.log(dataSource);
-  const handleEdit = (role_id) => {
-    console.log(role_id);
-    setEditingRoleId(role_id);
-    setIsEditing(true);
-  };
-
-  const handleDelete = async (itemId) => {};
-
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.role.id);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
 
   return (
     <Layout>
@@ -176,13 +160,7 @@ const CoffeeBrewingTools = () => {
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200"></div>
             </div>
-            <CoffeeBewingToolsTable
-              dataSource={dataSource}
-              onAdd={handleAdd}
-              onDelete={handleDelete}
-              onSave={handleSave}
-              onEdit={handleEdit}
-            />
+            <CoffeeBewingToolsTable dataSource={dataSource} />
           </Content>
         </Layout>
       </Content>

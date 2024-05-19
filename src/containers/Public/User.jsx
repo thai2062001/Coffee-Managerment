@@ -71,7 +71,7 @@ const User = () => {
   const userList = useSelector((state) => state.user.userList);
   const [dataSource, setDataSource] = useState(userList);
   const [newData, setNewData] = useState({});
-
+  console.log(userList);
   const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },

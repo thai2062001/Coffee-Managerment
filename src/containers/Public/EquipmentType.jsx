@@ -66,12 +66,9 @@ const items2 = [
 
 const EquipmentType = () => {
   const [selectedKeys, setSelectedKeys] = useState(["14"]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingRoleId, setEditingRoleId] = useState(null);
   const dispatch = useDispatch();
   const equipTypeList = useSelector((state) => state.type.equipType);
   const [dataSource, setDataSource] = useState(equipTypeList);
-  const [newData, setNewData] = useState({});
   const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -100,85 +97,6 @@ const EquipmentType = () => {
   const handleMenuClick = (e) => {
     const key = e.key;
     setSelectedKeys([key]);
-  };
-
-  const handleAdd = async (data) => {
-    console.log("formData:", data);
-    if (
-      data.username.trim() !== "" &&
-      data.password.trim() !== "" &&
-      data.phone_number.trim() !== "" &&
-      data.role_id !== "" &&
-      data.staff_id !== ""
-    ) {
-      try {
-        if (
-          Object.values(data).some(
-            (value) => value !== "" && value !== null && value !== undefined
-          )
-        ) {
-          setNewData(data);
-          console.log(newData);
-          setDataSource([...dataSource, data]);
-        }
-
-        await dispatch(addUserData(data));
-        console.log("New data added:", data);
-
-        // Lưu thông báo thành công vào localStorage
-      } catch (error) {
-        console.error("Failed to add new data:", error);
-        showFailureNotification(
-          "Error",
-          "Failed to add new data. Please try again later."
-        );
-      }
-    } else {
-      showFailureNotification(
-        "Error",
-        "Please provide all necessary information before adding"
-      );
-    }
-  };
-
-  useEffect(() => {
-    setDataSource(equipTypeList);
-  }, [equipTypeList]);
-
-  const handleEdit = (equipmentTypeId) => {
-    console.log("equipmentTypeId", equipmentTypeId);
-    setEditingRoleId(equipmentTypeId);
-    setIsEditing(true);
-  };
-
-  const handleDelete = async (equipmentTypeId) => {
-    console.log(equipmentTypeId);
-    try {
-      await dispatch(deleteEquipmentData(equipmentTypeId));
-      const newData = dataSource.filter(
-        (item) => item.equipmenttype_id !== equipmentTypeId
-      );
-      setDataSource(newData);
-      showSuccessNotification(
-        "Success",
-        "EquimentType Item deleted successfully!"
-      );
-    } catch (error) {
-      console.error("Failed to delete item:", error);
-    }
-  };
-
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex(
-      (item) => row.key === item.equipmenttype_id
-    );
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
   };
 
   return (
@@ -235,13 +153,7 @@ const EquipmentType = () => {
               <div className="w-200"></div>
             </div>
             {/* <AddUserForm onAddData={handleAdd} /> */}
-            <EquipmentTypeTable
-              dataSource={dataSource}
-              onAdd={handleAdd}
-              onDelete={handleDelete}
-              onSave={handleSave}
-              onEdit={handleEdit}
-            />
+            <EquipmentTypeTable dataSource={dataSource} />
           </Content>
         </Layout>
       </Content>

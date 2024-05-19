@@ -66,6 +66,7 @@ const Bill = () => {
   const dispatch = useDispatch();
   const billList = useSelector((state) => state.bill.billList);
   const [dataSource, setDataSource] = useState(billList);
+  console.log(billList);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerData, setDrawerData] = useState(null);
   const navigate = useNavigate();
@@ -98,7 +99,6 @@ const Bill = () => {
     setDrawerVisible(true); // Open the drawer
   };
 
-  console.log(drawerData);
   const handleAdd = async (data) => {
     console.log("formData:", data);
     try {

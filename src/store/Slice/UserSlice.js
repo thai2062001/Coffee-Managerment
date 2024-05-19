@@ -61,12 +61,16 @@ export const {
   fetchUserFailure,
   addUser,
   deleteUser,
-  loginUserSuccess,
   loginUserFailure,
+  loginUserSuccess,
   loginUserStart,
-  fetchUserSuccess,
   logoutUser,
 } = UserSlice.actions;
+
+export const fetchUserSuccess = (data) => ({
+  type: "FETCH_USER_SUCCESS",
+  payload: data,
+});
 
 export const loginUser = (user, navigate) => async (dispatch) => {
   try {

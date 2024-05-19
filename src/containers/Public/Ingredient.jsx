@@ -144,7 +144,7 @@ const Ingredient = () => {
 
   const handleSave = (row) => {
     const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.role.id);
+    const index = newData.findIndex((item) => row.key === item.ingredient_id);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -201,7 +201,7 @@ const Ingredient = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Ingredient</span>
+              <span className="text-[28px] font-bold ">Ingredient Table</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200"></div>

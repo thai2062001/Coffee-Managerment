@@ -13,6 +13,8 @@ const EditStorage = ({ onEditData, storage_id }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
+  const { Option } = Select;
+
   // Fetch storage data from the Redux store
 
   const getStorageById = (state, storageId) => {
