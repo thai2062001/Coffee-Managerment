@@ -157,7 +157,13 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "Operation",
       dataIndex: "operation",
       render: (_, record) => (
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: 200,
+          }}
+        >
           <Button
             onClick={() => onEdit(record.storage_id)}
             style={{ backgroundColor: "#4CAF50", color: "white" }}

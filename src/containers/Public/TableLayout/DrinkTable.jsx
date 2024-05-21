@@ -100,15 +100,26 @@ const DrinkTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "Operation",
       dataIndex: "operation",
       render: (_, record) => (
-        <div>
-          <a className="mr-2" onClick={() => onEdit(record.drink_id)}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: 200,
+          }}
+        >
+          <Button
+            onClick={() => onEdit(record.drink_id)}
+            style={{ backgroundColor: "#4CAF50", color: "white" }}
+          >
             Edit
-          </a>
+          </Button>
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => onDelete(record.drink_id)}
           >
-            <a>Delete</a>
+            <Button style={{ backgroundColor: "#f44336", color: "white" }}>
+              Delete
+            </Button>
           </Popconfirm>
         </div>
       ),

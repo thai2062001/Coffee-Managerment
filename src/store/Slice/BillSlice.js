@@ -58,7 +58,7 @@ export const addBillData = (newBill) => async (dispatch) => {
       "POST",
       newBill
     );
-    showSuccessNotification("Thành công", "Hóa đơn đã được thêm thành công");
+
     dispatch(addBill(response));
   } catch (error) {
     showFailureNotification("Lỗi", "Không thể thêm hóa đơn");

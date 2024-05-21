@@ -152,6 +152,7 @@ const EditRecipe = ({ onEditData, drink_id }) => {
           <Input
             placeholder="Please enter the drink name"
             value={formData.drink_name}
+            disabled
             onChange={(e) => handleChange("drink_name", e.target.value)}
           />
         </Form.Item>

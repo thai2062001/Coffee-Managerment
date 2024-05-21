@@ -110,9 +110,6 @@ const Bill = () => {
       await dispatch(addBillData(data));
       console.log("New data added:", data);
       // Reload trang sau 2 giây
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error) {
       console.error("Failed to add new data:", error);
       showFailureNotification(
@@ -222,22 +219,42 @@ const Bill = () => {
                     </p>
                     <p className="text-gray-600">
                       Price:{" "}
-                      {detail.drink.price ? `${detail.drink.price} VND` : "N/A"}
+                      {detail.drink.price
+                        ? `${detail.drink.price.toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })}`
+                        : "N/A"}
                     </p>
+                    {/* {item.totalCostPrice.toLocaleString("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              })} */}
                     <p className="text-gray-600">
                       Quantity: {detail.quantity || "N/A"}
                     </p>
                     <p className="text-gray-600">
                       Total:{" "}
                       {detail.quantity * detail.drink.price
-                        ? `${detail.quantity * detail.drink.price} VND`
+                        ? `${(
+                            detail.quantity * detail.drink.price
+                          ).toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })} `
                         : "N/A"}
                     </p>
                   </div>
                 </div>
               ))}
             <div className="mt-4 font-bold text-lg">
-              <p>Total Price: {drawerData.total_price} VND</p>
+              <p>
+                Total Price:{" "}
+                {drawerData.total_price.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
             </div>
           </div>
         )}

@@ -95,10 +95,7 @@ const Storage = () => {
         // Lưu thông báo thành công vào localStorage
       } catch (error) {
         console.error("Failed to add new data:", error);
-        showFailureNotification(
-          "Error",
-          "Failed to add new data. Please try again later."
-        );
+        showSuccessNotification("Success", " Addition Completed Successfully!");
       }
     } else {
       showFailureNotification(

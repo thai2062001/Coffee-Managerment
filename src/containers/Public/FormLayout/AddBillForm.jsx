@@ -4,6 +4,10 @@ import { Button, Form, Input, Space, Select, Drawer, Col, Row } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDrinkData } from "./../../../store/Slice/drinkSlice";
 import axios from "axios";
+import {
+  showSuccessNotification,
+  showFailureNotification,
+} from "../../../ultils/notificationUtils";
 const { Option } = Select;
 
 const AddBillForm = ({ onAddData }) => {
@@ -37,6 +41,10 @@ const AddBillForm = ({ onAddData }) => {
         "Content-Type": "application/json",
       },
     });
+    showSuccessNotification("Success", " Addition Completed Successfully!");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
     console.log("Response:", response);
     setOpen(false);
     form.resetFields(); // Optionally reset form fields

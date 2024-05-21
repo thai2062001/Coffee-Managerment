@@ -1,5 +1,5 @@
 import React from "react";
-import { Popconfirm } from "antd";
+import { Popconfirm, Button } from "antd";
 import LayoutTable from "./LayoutTable";
 import { formatDate } from "../../../components/MomentDate";
 const BillTable = ({ dataSource, onDelete, onSave, onEdit, onViewProfile }) => {
@@ -19,17 +19,28 @@ const BillTable = ({ dataSource, onDelete, onSave, onEdit, onViewProfile }) => {
       },
     },
     {
-      title: "Total Price",
+      title: "Total Price (VND)",
       dataIndex: "total_price",
       editable: true,
     },
     {
       title: "Operation",
-      dataIndex: "viewDetail",
+      dataIndex: "operation",
       render: (_, record) => (
-        <a className="view-bill-detail" onClick={() => onViewProfile(record)}>
-          Bill Detail
-        </a>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: 200,
+          }}
+        >
+          <Button
+            onClick={() => onViewProfile(record)}
+            style={{ backgroundColor: "#4CAF50", color: "white" }}
+          >
+            Bill Detail
+          </Button>
+        </div>
       ),
     },
   ];
