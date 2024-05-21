@@ -156,7 +156,9 @@ const StaticticalStorage = () => {
           </Sider>
           <Content style={{ padding: "0 24px", minHeight: 280 }}>
             <div className="flex justify-center p-1">
-              <span className="text-[28px] font-bold">Statistical</span>
+              <span className="text-[28px] font-bold">
+                Statistical Storage Table
+              </span>
             </div>
             <div className="w-full flex flex-col justify-start mt-3">
               <Card className="shadow-md rounded p-4">
@@ -187,10 +189,10 @@ const StaticticalStorage = () => {
                     Results
                   </Title>
                   <Text className="text-lg">
-                    Total Quantity All: {data.totalQuantityAll}
+                    Total Quantity : {data.totalQuantityAll}
                   </Text>
-                  <Text className="text-lg">
-                    Total Cost Price All: {data.totalCostPriceAll}
+                  <Text className="text-lg block">
+                    Total Cost Price : {data.totalCostPriceAll}
                   </Text>
                   <Title level={4} className="mt-4">
                     Goods Counts:

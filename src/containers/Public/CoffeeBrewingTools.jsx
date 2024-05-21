@@ -154,7 +154,7 @@ const CoffeeBrewingTools = () => {
           >
             <div className="flex justify-center p-1 ">
               <span className="text-[28px] font-bold ">
-                Coffee Bewing Tools
+                Coffee Bewing Tools Table
               </span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">

@@ -27,6 +27,7 @@ const items2 = [
       { key: "2", label: "Coffee Brewing Tools" },
       { key: "3", label: "Ingredients" },
       { key: "4", label: "Shop Equipments" },
+      { key: "14", label: "Statistical" },
     ],
   },
   {
@@ -83,12 +84,16 @@ const ShopEquipment = () => {
       1: path.STORAGE,
       2: path.COFFEETOOLS,
       3: path.INGREDIENT,
-
+      4: path.SHOPEQUIPMENT,
       5: path.DRINK,
+      6: path.RECIPE,
+      7: path.MENU,
       9: path.STAFF,
-      11: path.BILL,
       10: path.ROLE,
+      11: path.BILL,
+      12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -169,7 +174,7 @@ const ShopEquipment = () => {
           >
             <div className="flex justify-center p-1 ">
               <span className="text-[28px] font-bold ">
-                Coffee Bewing Tools
+                Shop Equipment Table
               </span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">

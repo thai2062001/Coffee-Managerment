@@ -15,7 +15,6 @@ import {
   showSuccessNotification,
   showFailureNotification,
 } from "../../ultils/notificationUtils";
-import { callAPINoHead } from "../../ultils/axiosApi";
 import {
   fetchStorageData,
   deleteStorageData,
@@ -218,7 +217,7 @@ const Storage = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Quản lý kho</span>
+              <span className="text-[28px] font-bold ">Storage Table</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200">

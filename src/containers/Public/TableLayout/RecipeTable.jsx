@@ -1,19 +1,85 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Button, Form, Input, Popconfirm, Table } from "antd";
-import { createAntTag } from "../../../ultils/tagUtils";
+import React, { useState } from "react";
+import { Button, Input, Popconfirm, Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import LayoutTable from "./LayoutTable";
 
 const RecipeTable = ({ dataSource, onDelete, onSave, onEdit }) => {
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Button
+          type="primary"
+          onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          icon={<SearchOutlined />}
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button
+          onClick={() => handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
+    render: (text) =>
+      searchedColumn === dataIndex ? <span>{text}</span> : text,
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+
   const defaultColumns = [
     {
       title: "ID",
       dataIndex: "drink_id",
       editable: false,
+      sorter: (a, b) => a.drink_id - b.drink_id,
     },
     {
       title: "Drink Name",
       dataIndex: "drink_name",
       editable: true,
+      ...getColumnSearchProps("drink_name"),
+      sorter: (a, b) => a.drink_name.localeCompare(b.drink_name),
     },
     {
       title: "Operation",
@@ -35,8 +101,6 @@ const RecipeTable = ({ dataSource, onDelete, onSave, onEdit }) => {
   ];
 
   const handleEditCell = (drink_id) => {
-    // Xử lý logic khi người dùng click vào nút "Edit" với ID là drink_id
-
     console.log("Edit item with ID:", drink_id);
     onEdit(drink_id);
   };

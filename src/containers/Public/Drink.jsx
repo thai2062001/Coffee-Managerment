@@ -30,6 +30,7 @@ const items2 = [
       { key: "2", label: "Coffee Brewing Tools" },
       { key: "3", label: "Ingredients" },
       { key: "4", label: "Shop Equipments" },
+      { key: "14", label: "Statistical" },
     ],
   },
   {
@@ -87,10 +88,15 @@ const Drink = () => {
       2: path.COFFEETOOLS,
       3: path.INGREDIENT,
       4: path.SHOPEQUIPMENT,
+      5: path.DRINK,
+      6: path.RECIPE,
+      7: path.MENU,
       9: path.STAFF,
       10: path.ROLE,
       11: path.BILL,
+      12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -121,7 +127,7 @@ const Drink = () => {
       console.log("Drink Item deleted successfully!");
       const newData = dataSource.filter((item) => item.drink_id !== itemId);
       setDataSource(newData);
-      showSuccessNotification("Thông báo", "Đã xóa thành công");
+      showSuccessNotification("Success", "Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item:", error);
     }
@@ -197,7 +203,7 @@ const Drink = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Drink</span>
+              <span className="text-[28px] font-bold ">Drink Table</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200">

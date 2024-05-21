@@ -89,26 +89,14 @@ const AddForm = ({ onAddData }) => {
       ) {
         const url = "http://localhost:5000/storage";
         const data = formData;
-
+        console.log(data);
         const response = await axios.post(url, data, {
           headers: {
             Authorization: `Bearer ${access_Token}`,
             "Content-Type": "application/json",
           },
         });
-        localStorage.setItem(
-          "successMessage",
-          JSON.stringify({
-            title: "Success",
-            message: "Addition Completed Successfully",
-          })
-        );
-        // Reload trang sau 2 giây
-
-        // Xử lý phản hồi ở đây nếu cần
         console.log("Response:", response);
-
-        // Reset form và đóng Drawer
         resetFormData();
         onClose();
 

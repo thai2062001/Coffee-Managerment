@@ -18,7 +18,7 @@ import { fetchUserData } from "./../../store/Slice/UserSlice";
 import AddUserForm from "./FormLayout/AddUserForm";
 import UserTable from "./TableLayout/UserTable";
 import { addUserData, deleteUserData } from "./../../store/Slice/UserSlice";
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 const items2 = [
   {
     key: "sub1",
@@ -70,8 +70,6 @@ const User = () => {
   const dispatch = useDispatch();
   const userList = useSelector((state) => state.user.userList);
   const [dataSource, setDataSource] = useState(userList);
-  const [newData, setNewData] = useState({});
-  console.log(userList);
   const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },

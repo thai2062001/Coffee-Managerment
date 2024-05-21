@@ -1,10 +1,26 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Button, Form, Input, Popconfirm, Table } from "antd";
-import { createAntTag } from "../../../ultils/tagUtils";
-import LayoutTable from "./LayoutTable";
+import React, { useState, useEffect } from "react";
+import { Table, Popconfirm, Button, Input } from "antd";
+import PasswordField from "./../../../components/PasswordField";
 
 const UserTable = ({ dataSource, onDelete, onSave, onEdit }) => {
-  const defaultColumns = [
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState(dataSource);
+
+  useEffect(() => {
+    // Filter data when searchText or dataSource changes
+    const filtered = dataSource.filter((item) =>
+      Object.keys(item).some((key) =>
+        String(item[key]).toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+    setFilteredData(filtered);
+  }, [searchText, dataSource]);
+
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
+
+  const columns = [
     {
       title: "ID",
       dataIndex: "user_id",
@@ -18,7 +34,7 @@ const UserTable = ({ dataSource, onDelete, onSave, onEdit }) => {
     {
       title: "Password",
       dataIndex: "password",
-      editable: true,
+      render: (text) => <PasswordField password={text} />,
     },
     {
       title: "Phone",
@@ -39,53 +55,36 @@ const UserTable = ({ dataSource, onDelete, onSave, onEdit }) => {
       title: "Operation",
       dataIndex: "operation",
       render: (_, record) => (
-        <div>
-          <a className="mr-2" onClick={() => onEdit(record.user_id)}>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <Button
+            onClick={() => onEdit(record.user_id)}
+            style={{ backgroundColor: "#4CAF50", color: "white" }}
+          >
             Edit
-          </a>
+          </Button>
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => onDelete(record.user_id)}
           >
-            <a>Delete</a>
+            <Button style={{ backgroundColor: "#f44336", color: "white" }}>
+              Delete
+            </Button>
           </Popconfirm>
         </div>
       ),
     },
   ];
 
-  const handleEditCell = (user_id) => {
-    // Xử lý logic khi người dùng click vào nút "Edit" với ID là staff_id
-
-    console.log("Edit item with ID:", user_id);
-    onEdit(user_id);
-  };
-
-  const columns = defaultColumns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        onSave,
-        onEdit: handleEditCell,
-      }),
-    };
-  });
-
   return (
-    <LayoutTable
-      dataSource={dataSource}
-      columns={columns}
-      onSave={onSave}
-      onDelete={onDelete}
-      onEdit={onEdit}
-    />
+    <>
+      <Input
+        placeholder="Search..."
+        value={searchText}
+        onChange={(e) => handleSearch(e.target.value)}
+        style={{ marginBottom: 16, width: 200, marginLeft: 20 }}
+      />
+      <Table dataSource={filteredData} columns={columns} rowKey="user_id" />
+    </>
   );
 };
 

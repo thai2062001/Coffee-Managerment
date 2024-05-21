@@ -251,13 +251,20 @@ const EditForm = ({ onEditData, staff_id }) => {
               <Form.Item
                 name="position"
                 label="Position"
-                rules={[{ required: true, message: "Please enter position" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please choose the Position",
+                  },
+                ]}
               >
-                <Input
-                  placeholder="Please enter position"
-                  value={formData.position}
-                  onChange={(e) => handleChange("position", e.target.value)}
-                />
+                <Select
+                  placeholder="Please choose the Position"
+                  onChange={(value) => handleChange("position", value)}
+                >
+                  <Option value="Manager">Manager</Option>
+                  <Option value="Staff">Staff</Option>
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>

@@ -56,6 +56,9 @@ const AddMenu = ({ onAddData }) => {
           formData
         );
         showSuccessNotification("Success", "Addition Completed Successfully");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
         resetFormData();
         onClose();
       } catch (error) {

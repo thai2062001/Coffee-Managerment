@@ -74,6 +74,9 @@ const AddDrinkForm = ({ onAddData }) => {
         );
         showSuccessNotification("Success", "Addition Completed Successfully");
         resetFormData();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
         onClose();
       } catch (error) {
         showFailureNotification(

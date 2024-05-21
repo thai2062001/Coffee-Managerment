@@ -85,11 +85,16 @@ const EquipmentType = () => {
       3: path.INGREDIENT,
       4: path.SHOPEQUIPMENT,
       5: path.DRINK,
+      6: path.RECIPE,
+      7: path.MENU,
       9: path.STAFF,
       10: path.ROLE,
       11: path.BILL,
+      12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
     };
+
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
   }, [selectedKeys, navigate]);
