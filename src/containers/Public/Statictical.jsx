@@ -37,6 +37,7 @@ const items2 = [
       { key: "2", label: "Coffee Brewing Tools" },
       { key: "3", label: "Ingredients" },
       { key: "4", label: "Shop Equipments" },
+      { key: "14", label: "Statistical" },
     ],
   },
   {
@@ -92,9 +93,13 @@ const Statictical = () => {
       3: path.INGREDIENT,
       4: path.SHOPEQUIPMENT,
       5: path.DRINK,
+      7: path.MENU,
       9: path.STAFF,
+      10: path.ROLE,
       11: path.BILL,
+      12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -153,7 +158,7 @@ const Statictical = () => {
           </Sider>
           <Content style={{ padding: "0 24px", minHeight: 280 }}>
             <div className="flex justify-center p-1">
-              <span className="text-[28px] font-bold">Statictical</span>
+              <span className="text-[28px] font-bold">Statistical Bill</span>
             </div>
             <div className="w-full flex flex-col justify-start mt-3">
               <Card className="shadow-md rounded p-4">
@@ -173,7 +178,7 @@ const Statictical = () => {
                       htmlType="submit"
                       className="bg-[#5BBCFF] mb-5 w-full"
                     >
-                      Get Statictical Bill
+                      Get Statistical Bill
                     </Button>
                   </Form.Item>
                 </Form>
@@ -184,8 +189,13 @@ const Statictical = () => {
                     Results
                   </Title>
                   <Text className="text-lg">
-                    Total Price All: {data.totalPriceAll}
+                    Total Price:{" "}
+                    {data.totalPriceAll.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
                   </Text>
+
                   <Title level={4} className="mt-4">
                     Drink Counts:
                   </Title>

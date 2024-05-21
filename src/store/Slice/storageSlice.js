@@ -61,6 +61,7 @@ export const addStorageData = (newStorage) => async (dispatch) => {
       "POST",
       newStorage
     );
+
     // Sau khi thêm thành công, dispatch action để cập nhật Redux store
     dispatch(addStorage(response));
   } catch (error) {

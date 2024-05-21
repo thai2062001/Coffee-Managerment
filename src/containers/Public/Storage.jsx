@@ -92,19 +92,7 @@ const Storage = () => {
     ) {
       try {
         await dispatch(addStorageData(data));
-        console.log("New data added:", data);
         // Lưu thông báo thành công vào localStorage
-        localStorage.setItem(
-          "successMessage",
-          JSON.stringify({
-            title: "Success",
-            message: "Addition Completed Successfully",
-          })
-        );
-        // Reload trang sau 2 giây
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1000);
       } catch (error) {
         console.error("Failed to add new data:", error);
         showFailureNotification(

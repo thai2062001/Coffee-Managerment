@@ -22,6 +22,7 @@ import HeaderLayout from "./HeaderLayout";
 import { useDispatch } from "react-redux";
 import { fetchRoleData } from "./../../store/Slice/roleSlice";
 import axios from "axios";
+import moment from "moment";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -80,6 +81,7 @@ const StaticticalStorage = () => {
   } = theme.useToken();
   const [dates, setDates] = useState([]);
   const [data, setData] = useState(null);
+  const [statisticalDate, setStatisticalDate] = useState(""); // Thêm state để lưu ngày statistical
 
   useEffect(() => {
     dispatch(fetchRoleData());
@@ -98,6 +100,7 @@ const StaticticalStorage = () => {
       11: path.BILL,
       12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -122,6 +125,9 @@ const StaticticalStorage = () => {
         );
         console.log(response.data);
         setData(response.data);
+        setStatisticalDate(
+          `${fromDate.format("DD/MM/YYYY")} -> ${toDate.format("DD/MM/YYYY")}`
+        ); // Lưu ngày statistical
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -186,14 +192,24 @@ const StaticticalStorage = () => {
               {data && (
                 <Card className="shadow-md rounded mt-4 p-4">
                   <Title level={3} className="mb-4">
-                    Results
+                    {statisticalDate} {/* Hiển thị ngày statistical */}
                   </Title>
-                  <Text className="text-lg">
-                    Total Quantity : {data.totalQuantityAll}
-                  </Text>
-                  <Text className="text-lg block">
-                    Total Cost Price : {data.totalCostPriceAll}
-                  </Text>
+                  <div className="flex mb-4">
+                    <div className="w-1/2 pr-4">
+                      <Text className="text-lg">
+                        Total Quantity: {data.totalQuantityAll.toFixed(3)} Kg
+                      </Text>
+                    </div>
+                    <div className="w-1/2 pl-4 text-right">
+                      <Text className="text-lg">
+                        Total Price:{" "}
+                        {data.totalCostPriceAll.toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </Text>
+                    </div>
+                  </div>
                   <Title level={4} className="mt-4">
                     Goods Counts:
                   </Title>
@@ -201,16 +217,24 @@ const StaticticalStorage = () => {
                     bordered
                     dataSource={data && Object.entries(data.goodsCounts)}
                     renderItem={([good, info]) => (
-                      <List.Item>
+                      <List.Item className="w-full">
                         <Text>{good}</Text>
                         <List
                           size="small"
                           bordered
                           dataSource={[info]}
                           renderItem={(item) => (
-                            <List.Item>
-                              Quantity: {item.quantity}, Total Cost Price:{" "}
-                              {item.totalCostPrice}
+                            <List.Item className="w-full">
+                              Quantity:{" "}
+                              {item.quantity
+                                .toFixed(3)
+                                .replace(/(\.|,)0{1,}$/g, "")
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              , Total Cost Price:{" "}
+                              {item.totalCostPrice.toLocaleString("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
                             </List.Item>
                           )}
                         />

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { path } from "../../../ultils/constant";
 import { callAPINoHead } from "../../../ultils/axiosApi";
 import { fetchStorageData } from "./../../../store/Slice/storageSlice";
+import { formatDate } from "../../../components/MomentDate";
 import {
   showFailureNotification,
   showSuccessNotification,
@@ -60,7 +61,7 @@ const EditStorage = ({ onEditData, storage_id }) => {
         quantity: storageData.quantity || "",
         goods_unit: storageData.goods_unit || "",
         equipmenttype_id: storageData.equipmenttype_id || "",
-        arrival_date: storageData.arrival_date || "",
+        arrival_date: formatDate(storageData.arrival_date) || "",
       });
 
       form.setFieldsValue({
@@ -69,7 +70,7 @@ const EditStorage = ({ onEditData, storage_id }) => {
         quantity: storageData.quantity || "",
         goods_unit: storageData.goods_unit || "",
         equipmenttype_id: storageData.equipmenttype_id || "",
-        arrival_date: storageData.arrival_date || "",
+        arrival_date: formatDate(storageData.arrival_date) || "",
       });
     }
   }, [storageData, form]);
@@ -268,14 +269,12 @@ const EditStorage = ({ onEditData, storage_id }) => {
               name="arrival_date"
               label="Arrival Date"
               rules={[
-                {
-                  required: true,
-                  message: "Please enter arrival date",
-                },
+                { required: true, message: "Please select Arrival date" },
               ]}
             >
               <Input
-                placeholder="Please enter arrival date"
+                type="date"
+                placeholder="Please select Arrival date"
                 value={formData.arrival_date}
                 onChange={(e) => handleChange("arrival_date", e.target.value)}
               />

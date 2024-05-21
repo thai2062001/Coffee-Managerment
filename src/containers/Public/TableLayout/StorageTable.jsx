@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
-import { Button, Menu, Dropdown, Input, Popconfirm } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, Popconfirm, Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { formatDate } from "../../../components/MomentDate";
 import { createAntTag } from "../../../ultils/tagUtils";
-import LayoutTable from "./LayoutTable";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // Import jspdf-autotable
@@ -79,6 +78,7 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "ID",
       dataIndex: "storage_id",
       editable: false,
+      sorter: (a, b) => a.storage_id - b.storage_id,
     },
     {
       title: "Name",
@@ -86,6 +86,7 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       width: "20%",
       editable: true,
       ...getColumnSearchProps("goods_name"),
+      sorter: (a, b) => a.goods_name.localeCompare(b.goods_name),
     },
     {
       title: "Arrival Date",
@@ -94,26 +95,54 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       render: (text) => {
         return text ? formatDate(text) : "N/A";
       },
+      sorter: (a, b) => new Date(a.arrival_date) - new Date(b.arrival_date),
     },
     {
       title: "Price",
       dataIndex: "cost_price",
       editable: true,
+      sorter: (a, b) => a.cost_price - b.cost_price,
     },
     {
-      title: "Quantity",
+      title: "Quantity (Kg)",
       dataIndex: "quantity",
       editable: true,
+      sorter: (a, b) => a.quantity - b.quantity,
+      render: (value) => {
+        // Utility function to round to three decimal places
+        const roundToThreeDecimals = (num) => {
+          return parseFloat(num.toFixed(3));
+        };
+
+        // Round the quantity value to three decimal places
+        const roundedValue = roundToThreeDecimals(value);
+
+        // Return the rounded value
+        return roundedValue;
+      },
     },
+
     {
       title: "Unit",
       dataIndex: "goods_unit",
       editable: true,
       render: (text) => {
+        // Utility function to capitalize the first letter
+        const capitalizeFirstLetter = (string) => {
+          return string.charAt(0).toUpperCase() + string.slice(1);
+        };
+
+        // Capitalize the first letter of the text
+        const capitalizedText = capitalizeFirstLetter(text);
+
+        // Determine the color based on the text
         let color = text === "kilogram" ? "#f50" : "#108ee9";
-        return createAntTag(text, color);
+
+        // Create and return the Ant Design tag
+        return createAntTag(capitalizedText, color);
       },
     },
+
     {
       title: "Created by",
       dataIndex: "created_by",
@@ -128,15 +157,20 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
       title: "Operation",
       dataIndex: "operation",
       render: (_, record) => (
-        <div>
-          <a className="mr-2" onClick={() => onEdit(record.storage_id)}>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <Button
+            onClick={() => onEdit(record.storage_id)}
+            style={{ backgroundColor: "#4CAF50", color: "white" }}
+          >
             Edit
-          </a>
+          </Button>
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => onDelete(record.storage_id)}
           >
-            <a>Delete</a>
+            <Button style={{ backgroundColor: "#f44336", color: "white" }}>
+              Delete
+            </Button>
           </Popconfirm>
         </div>
       ),
@@ -173,16 +207,18 @@ const StorageTable = ({ dataSource, onSave, onDelete, onEdit }) => {
 
   return (
     <div>
-      <Button onClick={exportToExcel}>Export to Exel</Button>
+      <Button onClick={exportToExcel}>Export to Excel</Button>
       <div ref={tableWrapperRef}>
         {" "}
         {/* Attach ref to the wrapper div */}
-        <LayoutTable
+        <Table
           dataSource={dataSource}
           columns={columns}
-          onSave={onSave}
-          onDelete={onDelete}
-          onEdit={onEdit}
+          rowKey="storage_id"
+          pagination={{ pageSize: 10 }}
+          onChange={(pagination, filters, sorter) => {
+            console.log("Various parameters", pagination, filters, sorter);
+          }}
         />
       </div>
     </div>

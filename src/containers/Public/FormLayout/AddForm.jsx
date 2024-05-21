@@ -102,6 +102,9 @@ const AddForm = ({ onAddData }) => {
 
         // Thông báo thành công nếu cần
         showSuccessNotification("Success", "Storage added successfully.");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         showFailureNotification(
           "Error",
