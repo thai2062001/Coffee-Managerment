@@ -232,7 +232,7 @@ const DailyReport = () => {
                 ]}
               >
                 <Input.TextArea
-                  rows={4}
+                  rows={15}
                   placeholder="Enter your report content"
                 />
               </Form.Item>

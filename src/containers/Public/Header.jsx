@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "antd"; // Using Ant Design Button component
-import { jwtDecode } from "jwt-decode"; // Ensure jwt-decode is installed
+import { Button } from "antd";
+import { jwtDecode } from "jwt-decode";
 import logo from "../../assets/logo.png";
 import logo_new from "../../assets/logo_new.jpg";
 import icons from "../../ultils/icons";
 import { path } from "../../ultils/constant";
+import { LogoutOutlined } from "@ant-design/icons"; // Import the Logout icon from Ant Design Icons
 
 const { AiOutlinePlusCircle, IoIosLogIn, AiOutlineUserAdd } = icons;
 
@@ -77,9 +78,10 @@ function Header() {
         {user_name ? (
           <div className="flex items-center gap-4">
             <span className="text-lg">{user_name}</span>
-            <Button type="primary" onClick={handleLogout}>
-              Logout
-            </Button>
+            <LogoutOutlined
+              className="text-lg cursor-pointer"
+              onClick={handleLogout}
+            />
           </div>
         ) : (
           <span onClick={goLogin}>

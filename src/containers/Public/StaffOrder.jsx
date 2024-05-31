@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Breadcrumb, Card, InputNumber, Image } from "antd";
+import { Layout, Breadcrumb, Card, InputNumber, Image, Button } from "antd"; // Thêm Button từ Ant Design
 import HeaderLayout from "./HeaderLayout";
 import Cart from "./Cart";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,7 @@ import {
   showFailureNotification,
   showSuccessNotification,
 } from "../../ultils/notificationUtils";
+import { LeftOutlined } from "@ant-design/icons"; // Thêm biểu tượng mũi tên từ Ant Design
 
 const { Content } = Layout;
 
@@ -102,12 +103,23 @@ const StaffOrder = () => {
     }
   };
 
+  const handleGoBack = () => {
+    window.history.back(); // Quay lại trang trước đó
+  };
+
   return (
     <Layout>
       <HeaderLayout />
       <Content className="p-5 flex">
         <div className="flex-grow">
           <Breadcrumb className="mb-4">
+            <Breadcrumb.Item>
+              <Button
+                type="text"
+                icon={<LeftOutlined />}
+                onClick={handleGoBack}
+              />
+            </Breadcrumb.Item>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>List</Breadcrumb.Item>
             <Breadcrumb.Item>Application</Breadcrumb.Item>
@@ -116,7 +128,7 @@ const StaffOrder = () => {
             {drinkList.map((drink) => (
               <Card
                 key={drink.id}
-                className="shadow-lg rounded-lg w-72 h-[350px]"
+                className="shadow-lg flex flex-col rounded-lg w-72 h-[350px]"
                 cover={
                   <Image
                     alt={drink.drink_name}
@@ -128,11 +140,12 @@ const StaffOrder = () => {
               >
                 <Card.Meta
                   title={
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold">
+                    <div className="flex flex-col justify-between items-center">
+                      <span className="text-2xl font-semibold">
                         {drink.drink_name}
                       </span>
-                      <span className="text-gray-500 text-lg">
+                      <span className="text-red text-lg">
+                        <span className="text-black font-thin"> Price: </span>
                         {drink.price.toLocaleString("vi-VN", {
                           style: "currency",
                           currency: "VND",
@@ -141,12 +154,14 @@ const StaffOrder = () => {
                     </div>
                   }
                 />
-                <InputNumber
-                  min={0}
-                  className="mt-3 w-[80px]"
-                  value={quantities[drink.drink_id] || 0}
-                  onChange={(value) => handleAddToCart(drink, value)}
-                />
+                <div className="ml-auto flex  w-full justify-end mt-5">
+                  <InputNumber
+                    min={0}
+                    className="w-20"
+                    value={quantities[drink.drink_id] || 0}
+                    onChange={(value) => handleAddToCart(drink, value)}
+                  />
+                </div>
               </Card>
             ))}
           </div>
