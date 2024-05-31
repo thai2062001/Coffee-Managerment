@@ -146,6 +146,7 @@ const AddRecipe = ({ onAddData }) => {
               <Item
                 name="drink_id"
                 label="Drink Name"
+                
                 rules={[
                   { required: true, message: "Please select a drink name" },
                 ]}

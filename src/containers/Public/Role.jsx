@@ -31,6 +31,7 @@ const items2 = [
       { key: "2", label: "Coffee Brewing Tools" },
       { key: "3", label: "Ingredients" },
       { key: "4", label: "Shop Equipments" },
+      { key: "14", label: "Statistical" },
     ],
   },
   {
@@ -49,6 +50,8 @@ const items2 = [
     label: "Manage permissions and employees",
     children: [
       { key: "9", label: "Employees" },
+      { key: "15", label: "Daily Report" },
+      { key: "16", label: "Timekeeping" },
       { key: "10", label: "Permission" },
       { key: "13", label: "User & Account" },
     ],
@@ -87,9 +90,16 @@ const Role = () => {
       3: path.INGREDIENT,
       4: path.SHOPEQUIPMENT,
       5: path.DRINK,
+      6: path.RECIPE,
+      7: path.MENU,
       9: path.STAFF,
+      10: path.ROLE,
       11: path.BILL,
+      12: path.STATICTICAL,
       13: path.USER,
+      14: path.STATICTICAL_STORAGE,
+      15: path.DAILYREPORT,
+      16: path.TIMEKEEPING,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);

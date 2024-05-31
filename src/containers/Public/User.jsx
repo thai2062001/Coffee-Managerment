@@ -48,6 +48,8 @@ const items2 = [
     label: "Manage permissions and employees",
     children: [
       { key: "9", label: "Employees" },
+      { key: "15", label: "Daily Report" },
+      { key: "16", label: "Timekeeping" },
       { key: "10", label: "Permission" },
       { key: "13", label: "User & Account" },
     ],
@@ -94,6 +96,8 @@ const User = () => {
       12: path.STATICTICAL,
       13: path.USER,
       14: path.STATICTICAL_STORAGE,
+      15: path.DAILYREPORT,
+      16: path.TIMEKEEPING,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -145,7 +149,6 @@ const User = () => {
     setEdittingUserId(user_id);
     setIsEditing(true);
   };
-
   const handleDelete = async (itemId) => {
     console.log(itemId);
     try {
@@ -155,6 +158,10 @@ const User = () => {
       showSuccessNotification("Success", "User Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item:", error);
+      showFailureNotification(
+        "Error",
+        "You do not have permission to delete this account."
+      );
     }
   };
 

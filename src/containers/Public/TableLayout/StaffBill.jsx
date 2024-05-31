@@ -6,19 +6,14 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme, Drawer } from "antd";
-import HeaderLayout from "./HeaderLayout";
+import HeaderLayout from "../HeaderLayout";
 import { useDispatch, useSelector } from "react-redux";
-import { path } from "../../ultils/constant";
-import {
-  showFailureNotification,
-  showSuccessNotification,
-} from "../../ultils/notificationUtils";
-import BillTable from "./TableLayout/BillTable";
-import { fetchBillData } from "./../../store/Slice/BillSlice";
-import { formatDate } from "../../components/MomentDate";
-import AddBillForm from "./FormLayout/AddBillForm";
-import { addBillData } from "./../../store/Slice/BillSlice";
-import { callAPIDelete } from "../../ultils/axiosApi";
+import { path } from "../../../ultils/constant";
+import { showFailureNotification } from "../../../ultils/notificationUtils";
+import BillTable from "./BillTable";
+import { fetchBillData, addBillData } from "../../../store/Slice/BillSlice";
+import { formatDate } from "../../../components/MomentDate";
+import AddBillForm from "../FormLayout/AddBillForm";
 const { Header, Content, Footer, Sider } = Layout;
 
 const items2 = [
@@ -27,48 +22,15 @@ const items2 = [
     icon: React.createElement(UserOutlined),
     label: "Manage Storage and tools",
     children: [
-      { key: "1", label: "Storage" },
-      { key: "2", label: "Coffee Brewing Tools" },
-      { key: "3", label: "Ingredients" },
-      { key: "4", label: "Shop Equipments" },
-      { key: "14", label: "Statistical" },
-    ],
-  },
-  {
-    key: "sub2",
-    icon: React.createElement(LaptopOutlined),
-    label: "Manage drinks and menus ",
-    children: [
-      { key: "5", label: "Drink" },
-      { key: "6", label: "Recipe" },
-      { key: "7", label: "Menu" },
-    ],
-  },
-  {
-    key: "sub3",
-    icon: React.createElement(NotificationOutlined),
-    label: "Manage permissions and employees",
-    children: [
-      { key: "9", label: "Employees" },
-      { key: "15", label: "Daily Report" },
-      { key: "16", label: "Timekeeping" },
-      { key: "10", label: "Permission" },
-      { key: "13", label: "User & Account" },
-    ],
-  },
-  {
-    key: "sub4",
-    icon: React.createElement(NotificationOutlined),
-    label: "Bill management",
-    children: [
-      { key: "11", label: "Bill" },
-      { key: "12", label: "Statistical" },
+      { key: "1", label: "Bill" },
+      { key: "2", label: "Order" },
+      { key: "3", label: "Daily Report" },
     ],
   },
 ];
 
-const Bill = () => {
-  const [selectedKeys, setSelectedKeys] = useState(["11"]);
+const StaffBill = () => {
+  const [selectedKeys, setSelectedKeys] = useState(["1"]);
   const dispatch = useDispatch();
   const billList = useSelector((state) => state.bill.billList);
   const [dataSource, setDataSource] = useState(billList);
@@ -86,21 +48,9 @@ const Bill = () => {
 
   useEffect(() => {
     const keyMap = {
-      1: path.STORAGE,
-      2: path.COFFEETOOLS,
-      3: path.INGREDIENT,
-      4: path.SHOPEQUIPMENT,
-      5: path.DRINK,
-      6: path.RECIPE,
-      7: path.MENU,
-      9: path.STAFF,
-      10: path.ROLE,
-      11: path.BILL,
-      12: path.STATICTICAL,
-      13: path.USER,
-      14: path.STATICTICAL_STORAGE,
-      15: path.DAILYREPORT,
-      16: path.TIMEKEEPING,
+      1: path.STAFF_BILL,
+      2: path.STAFF_ORDER,
+      3: path.STAFF_REPORT,
     };
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
@@ -124,28 +74,6 @@ const Bill = () => {
         "Failed to add new data. Please try again later."
       );
     }
-  };
-  const handleDelete = async (itemId) => {
-    console.log(itemId);
-    try {
-      await callAPIDelete(`http://localhost:5000/bill/${itemId}`);
-      console.log("Bill Item deleted successfully!");
-      const newData = dataSource.filter((item) => item.bill_id !== itemId);
-      setDataSource(newData);
-      showSuccessNotification("Success", " Item deleted successfully!");
-    } catch (error) {
-      console.error("Failed to delete item:", error);
-    }
-  };
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.bill_id);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
   };
 
   useEffect(() => {
@@ -207,14 +135,12 @@ const Bill = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Bill</span>
+              <span className="text-[28px] font-bold ">Bill Staff</span>
             </div>
             <AddBillForm onAddData={handleAdd} />
             <BillTable
               dataSource={dataSource}
               onAdd={handleAdd}
-              onDelete={handleDelete}
-              onSave={handleSave}
               onViewProfile={handleViewProfile}
             />
           </Content>
@@ -294,4 +220,4 @@ const Bill = () => {
   );
 };
 
-export default Bill;
+export default StaffBill;

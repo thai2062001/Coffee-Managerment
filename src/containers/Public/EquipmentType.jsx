@@ -30,7 +30,7 @@ const items2 = [
       { key: "2", label: "Coffee Brewing Tools" },
       { key: "3", label: "Ingredients" },
       { key: "4", label: "Shop Equipments" },
-      { key: "14", label: "Equipments Type" },
+      { key: "14", label: "Statistical" },
     ],
   },
   {
@@ -49,6 +49,8 @@ const items2 = [
     label: "Manage permissions and employees",
     children: [
       { key: "9", label: "Employees" },
+      { key: "15", label: "Daily Report" },
+      { key: "16", label: "Timekeeping" },
       { key: "10", label: "Permission" },
       { key: "13", label: "User & Account" },
     ],
@@ -63,7 +65,6 @@ const items2 = [
     ],
   },
 ];
-
 const EquipmentType = () => {
   const [selectedKeys, setSelectedKeys] = useState(["14"]);
   const dispatch = useDispatch();
@@ -93,6 +94,8 @@ const EquipmentType = () => {
       12: path.STATICTICAL,
       13: path.USER,
       14: path.STATICTICAL_STORAGE,
+      15: path.DAILYREPORT,
+      16: path.TIMEKEEPING,
     };
 
     const pathLink = keyMap[selectedKeys[0]];

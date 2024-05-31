@@ -31,7 +31,7 @@ const AddForm = ({ onAddData }) => {
   const storageList = useSelector((state) => state.storage.storageList);
 
   const [userId, setUserId] = useState("");
-  const access_Token = localStorage.getItem("access-token");
+  const access_Token = localStorage.getItem("accessToken");
 
   useEffect(() => {
     const decodedToken = unhashToken(access_Token);

@@ -1,23 +1,53 @@
 import React from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { loginUser } from "./../../store/Slice/UserSlice";
 import banner from "../../../src/assets/banner.jpg";
 import coffee from "../../../src/assets/coffee.jpg";
 import Header from "./Header";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const dispatch = useDispatch();
   const loginError = useSelector((state) => state.user.error);
+  const navigate = useNavigate();
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log("Attempting to log in with:", values);
-    dispatch(
-      loginUser({
-        phone_number: values.phone_number,
-        password: values.password,
-      })
-    );
+    try {
+      const resultAction = await dispatch(
+        loginUser({
+          phone_number: values.phone_number,
+          password: values.password,
+        })
+      );
+
+      const result = unwrapResult(resultAction);
+      console.log("Login successful, received result:", result);
+
+      const accessToken = result.accessToken;
+
+      if (typeof accessToken === "string") {
+        localStorage.setItem("accessToken", accessToken);
+
+        const decodedToken = jwtDecode(accessToken);
+        const roleId = decodedToken.role_id;
+
+        if (roleId === 1) {
+          console.log("1");
+          navigate("/admin/table/storage");
+        } else {
+          console.log("2");
+          navigate("/staff/table/bill");
+        }
+      } else {
+        console.error("Invalid access token");
+      }
+    } catch (error) {
+      console.error("Login failed:", error.message);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {

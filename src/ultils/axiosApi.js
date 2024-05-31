@@ -1,5 +1,5 @@
 import axios from "axios";
-const access_Token = localStorage.getItem("access-token");
+const access_Token = localStorage.getItem("accessToken");
 const callAPI = async (url, method, data = null, headers = {}) => {
   try {
     const response = await axios({
@@ -103,7 +103,9 @@ const callAPIPatchMulti = async (url, formData) => {
 
 const callAPIHead = async (url, method, data = null, token = null) => {
   try {
-    token = access_Token;
+    const accessToken = localStorage.getItem("accessToken");
+    token = accessToken;
+    console.log(token);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await axios({ method, url, data, headers });
     return response.data;

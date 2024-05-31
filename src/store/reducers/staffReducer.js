@@ -1,5 +1,7 @@
 const initialState = {
   staffList: [],
+  reportList: [],
+  attendanceList: [],
 };
 
 function staffReducer(state = initialState, action) {
@@ -8,6 +10,16 @@ function staffReducer(state = initialState, action) {
       return {
         ...state,
         staffList: action.payload,
+      };
+    case "FETCH_REPORT_SUCCESS":
+      return {
+        ...state,
+        reportList: action.payload,
+      };
+    case "FETCH_ATTENDANCE_SUCCESS":
+      return {
+        ...state,
+        attendanceList: action.payload,
       };
     default:
       return state;

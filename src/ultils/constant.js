@@ -2,6 +2,8 @@ export const path = {
   HOME: "/*",
   LOGIN: "login",
   HEADER: "/header",
+
+  //ADMIN
   STORAGE: "/admin/table/storage",
   DRINK: "/admin/table/drink",
   STAFF: "/admin/table/staff",
@@ -16,9 +18,24 @@ export const path = {
   MENU: "/admin/table/menu",
   STATICTICAL: "/admin/table/statictical",
   STATICTICAL_STORAGE: "/admin/table/staticticalstorage",
+  DAILYREPORT: "/admin/table/dailyreport",
+  TIMEKEEPING: "/admin/table/timekeeping",
 
+  //STAFF
+  STAFF_BILL: "/staff/table/bill",
+  STAFF_ORDER: "/staff/table/order",
+  STAFF_REPORT: "/staff/table/report",
+
+  //API
   API_BASE_URL: "http://localhost:5000",
   STAFF_API_URL: "/staff",
+  STAFF_API_REPORT: "/staff/daily_report",
+  STAFF_API_CHECK: "/staff/check",
+  STAFF_API_GET_REPORT: "/staff/list_report",
+  STAFF_API_GET_CHECK_REPORT: "/staff/check_daily_report",
+  STAFF_API_CHECKIN: "/staff/check_in",
+  STAFF_API_CHECKOUT: "/staff/check_out",
+  STAFF_API_GET_ATTEDANCE: "/staff/list_attedacce",
   DRINK_API_URL: "/drinks",
   INGREDIENT_API_URL: "/ingredient",
   STORAGE_API_URL: "/storage",

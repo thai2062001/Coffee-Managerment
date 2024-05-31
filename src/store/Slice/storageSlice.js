@@ -55,11 +55,13 @@ export const fetchStorageData = () => async (dispatch) => {
 };
 export const addStorageData = (newStorage) => async (dispatch) => {
   try {
+    const accessToken = localStorage.getItem("accessToken");
     // Gửi yêu cầu thêm vai trò đến API và nhận lại dữ liệu vai trò mới
     const response = await callAPIHead(
       path.API_BASE_URL + path.STORAGE_API_URL,
       "POST",
-      newStorage
+      newStorage,
+      accessToken
     );
 
     // Sau khi thêm thành công, dispatch action để cập nhật Redux store

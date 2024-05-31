@@ -13,8 +13,10 @@ import {
   showFailureNotification,
 } from "../../ultils/notificationUtils";
 import { useDispatch, useSelector } from "react-redux";
-import IngredientTable from "./TableLayout/IngredientTable";
-import { fetchIngredientData } from "./../../store/Slice/ingredientSlice";
+import { fetchReportData } from "../../store/Slice/staffSlice";
+import ReportTable from "./TableLayout/ReportTable";
+import { fetchUserData } from "../../store/Slice/UserSlice";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const items2 = [
@@ -62,22 +64,34 @@ const items2 = [
     ],
   },
 ];
-const Ingredient = () => {
-  const [selectedKeys, setSelectedKeys] = useState(["3"]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingRoleId, setEditingRoleId] = useState(null);
+
+const ReportDaily = () => {
+  const [selectedKeys, setSelectedKeys] = useState(["15"]);
   const dispatch = useDispatch();
-  const ingredientList = useSelector(
-    (state) => state.ingredient.ingredientList
-  );
-  const [dataSource, setDataSource] = useState(ingredientList);
+  const reportList = useSelector((state) => state.staff.reportList);
+  const userList = useSelector((state) => state.user.userList);
+  const [dataSource, setDataSource] = useState([]);
+  useEffect(() => {
+    if (reportList.length > 0 && userList.length > 0) {
+      const combinedData = reportList.map((report) => {
+        const user = userList.find((user) => user.user_id === report.user_id);
+        return {
+          ...report,
+          username: user ? user.username : "Unknown",
+        };
+      });
+
+      setDataSource(combinedData);
+    }
+  }, [reportList, userList]);
   const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   useEffect(() => {
-    dispatch(fetchIngredientData());
+    dispatch(fetchReportData());
+    dispatch(fetchUserData());
   }, [dispatch]);
 
   useEffect(() => {
@@ -98,7 +112,6 @@ const Ingredient = () => {
       15: path.DAILYREPORT,
       16: path.TIMEKEEPING,
     };
-
     const pathLink = keyMap[selectedKeys[0]];
     if (pathLink) navigate(pathLink);
   }, [selectedKeys, navigate]);
@@ -106,62 +119,6 @@ const Ingredient = () => {
   const handleMenuClick = (e) => {
     const key = e.key;
     setSelectedKeys([key]);
-  };
-
-  const handleAdd = async (data) => {
-    console.log("formData:", data);
-    if (data.role_name.trim() !== "") {
-      try {
-        await dispatch(addRoleData(data));
-        console.log("New data added:", data);
-        // Lưu thông báo thành công vào localStorage
-        localStorage.setItem(
-          "successMessage",
-          JSON.stringify({
-            title: "Success",
-            message: "Addition Completed Successfully",
-          })
-        );
-        // Reload trang sau 2 giây
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } catch (error) {
-        console.error("Failed to add new data:", error);
-        showFailureNotification(
-          "Error",
-          "Failed to add new data. Please try again later."
-        );
-      }
-    } else {
-      showFailureNotification(
-        "Error",
-        "Please provide all necessary information before adding"
-      );
-    }
-  };
-
-  useEffect(() => {
-    setDataSource(ingredientList);
-  }, [ingredientList]);
-
-  const handleEdit = (ingredient_id) => {
-    console.log("ingredient id", ingredient_id);
-    setEditingRoleId(ingredient_id);
-    setIsEditing(true);
-  };
-
-  const handleDelete = async (itemId) => {};
-
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.ingredient_id);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
   };
 
   return (
@@ -212,18 +169,12 @@ const Ingredient = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Ingredient Table</span>
+              <span className="text-[28px] font-bold ">Daily Report</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200"></div>
             </div>
-            <IngredientTable
-              dataSource={dataSource}
-              onAdd={handleAdd}
-              onDelete={handleDelete}
-              onSave={handleSave}
-              onEdit={handleEdit}
-            />
+            <ReportTable dataSource={dataSource} />
           </Content>
         </Layout>
       </Content>
@@ -236,4 +187,4 @@ const Ingredient = () => {
   );
 };
 
-export default Ingredient;
+export default ReportDaily;

@@ -12,7 +12,7 @@ function HeaderLayout() {
   const navigate = useNavigate();
 
   const LogOut = useCallback(() => {
-    localStorage.removeItem("access-token");
+    localStorage.removeItem("accessToken");
     navigate("/login");
   }, [navigate]);
 

@@ -51,6 +51,8 @@ const items2 = [
     label: "Manage permissions and employees",
     children: [
       { key: "9", label: "Employees" },
+      { key: "15", label: "Daily Report" },
+      { key: "16", label: "Timekeeping" },
       { key: "10", label: "Permission" },
       { key: "13", label: "User & Account" },
     ],
@@ -149,6 +151,8 @@ const Storage = () => {
       12: path.STATICTICAL,
       13: path.USER,
       14: path.STATICTICAL_STORAGE,
+      15: path.DAILYREPORT,
+      16: path.TIMEKEEPING,
     };
 
     const pathLink = keyMap[selectedKeys[0]];

@@ -40,6 +40,14 @@ const BillTable = ({ dataSource, onDelete, onSave, onEdit, onViewProfile }) => {
           >
             Bill Detail
           </Button>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => onDelete(record.bill_id)}
+          >
+            <Button style={{ backgroundColor: "#f44336", color: "white" }}>
+              Delete
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },
