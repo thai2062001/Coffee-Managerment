@@ -12,6 +12,7 @@ import {
   showSuccessNotification,
 } from "../../ultils/notificationUtils";
 import moment from "moment";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const items2 = [
@@ -29,7 +30,10 @@ const items2 = [
 
 const DailyReport = () => {
   const [selectedKeys, setSelectedKeys] = useState(["3"]);
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [isCheckedIn, setIsCheckedIn] = useState(
+    localStorage.getItem("isCheckedIn") === "true"
+  );
+  const [form] = Form.useForm(); // Add form instance here
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -49,12 +53,9 @@ const DailyReport = () => {
 
   const handleAdd = async (data) => {
     try {
-      const result = await dispatch(addReportData({ content: data.content }));
+      await dispatch(addReportData({ content: data.content }));
       showSuccessNotification("Success", "Addition Completed Successfully");
-      // Reload the page after 2 seconds
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      form.resetFields(); // Reset the form fields after successful submission
     } catch (error) {
       console.error("Failed to add new data:", error);
       showFailureNotification(
@@ -64,33 +65,17 @@ const DailyReport = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchCheckInStatus = async () => {
-      const url = path.API_BASE_URL + path.STAFF_API_CHECK;
-      try {
-        const response = await callAPIHead(url, "GET");
-        if (response === true) {
-          setIsCheckedIn(true);
-          localStorage.setItem("isCheckedIn", "true");
-        } else {
-          setIsCheckedIn(false);
-          localStorage.setItem("isCheckedIn", "false");
-        }
-      } catch (error) {
-        console.error("Failed to fetch check-in status:", error);
-      }
-    };
-
-    fetchCheckInStatus();
-  }, []);
-
   const handleCheckIn = async () => {
-    setIsCheckedIn(true);
-    localStorage.setItem("isCheckedIn", "true"); // Lưu trạng thái vào localStorage
     const url = path.API_BASE_URL + path.STAFF_API_CHECKIN;
     try {
-      await callAPIHead(url, "POST", {});
-      showSuccessNotification("Success", "Check-in Completed Successfully");
+      const response = await callAPIHead(url, "POST", {});
+      if (response === true) {
+        setIsCheckedIn(true);
+        localStorage.setItem("isCheckedIn", "true");
+        showSuccessNotification("Success", "Check-in Completed Successfully");
+      } else {
+        showFailureNotification("Error", "Already checked in.");
+      }
     } catch (error) {
       console.error("Failed to check-in:", error);
       showFailureNotification(
@@ -219,6 +204,7 @@ const DailyReport = () => {
               layout="vertical"
               onFinish={handleAdd}
               initialValues={{ date: moment().format("YYYY-MM-DD HH:mm:ss") }}
+              form={form} // Bind form instance to Form component
               className="max-w-lg mx-auto p-4 bg-white rounded-lg shadow-md"
             >
               <Form.Item label="Date" name="date">

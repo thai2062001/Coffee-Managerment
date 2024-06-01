@@ -175,7 +175,7 @@ const TimeKeeping = () => {
             }}
           >
             <div className="flex justify-center p-1 ">
-              <span className="text-[28px] font-bold ">Daily Report</span>
+              <span className="text-[28px] font-bold ">TimeKeeping</span>
             </div>
             <div className="w-1800 flex flex-col justify-start  mt-3">
               <div className="w-200"></div>

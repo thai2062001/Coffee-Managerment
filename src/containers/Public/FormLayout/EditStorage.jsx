@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { path } from "../../../ultils/constant";
 import { callAPINoHead } from "../../../ultils/axiosApi";
 import { fetchStorageData } from "./../../../store/Slice/storageSlice";
-import { formatDate } from "../../../components/MomentDate";
+import { formatDate, formatDateForInput } from "../../../components/MomentDate";
 import {
   showFailureNotification,
   showSuccessNotification,
@@ -61,7 +61,7 @@ const EditStorage = ({ onEditData, storage_id }) => {
         quantity: storageData.quantity || "",
         goods_unit: storageData.goods_unit || "",
         equipmenttype_id: storageData.equipmenttype_id || "",
-        arrival_date: formatDate(storageData.arrival_date) || "",
+        arrival_date: formatDateForInput(storageData.arrival_date) || "",
       });
 
       form.setFieldsValue({
@@ -70,7 +70,7 @@ const EditStorage = ({ onEditData, storage_id }) => {
         quantity: storageData.quantity || "",
         goods_unit: storageData.goods_unit || "",
         equipmenttype_id: storageData.equipmenttype_id || "",
-        arrival_date: formatDate(storageData.arrival_date) || "",
+        arrival_date: formatDateForInput(storageData.arrival_date) || "",
       });
     }
   }, [storageData, form]);

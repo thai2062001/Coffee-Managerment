@@ -44,6 +44,7 @@ export const path = {
   COFFEETOOLS_API_URL: "/coffee-brewing-tools",
   SHOPEQUIPMENT_API_URL: "/shop-equipment",
   USER_API_URL: "/users",
+  USER_EXIST_API_URL: "/users/user_not_have_account",
   BILL_API_URL: "/bill",
   EQUIPTYPE_API_URL: "/equipment-type",
   AUTHOR_API_URL: "/auth/login",

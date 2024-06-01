@@ -15,17 +15,16 @@ import {
   showFailureNotification,
   showSuccessNotification,
 } from "../../../ultils/notificationUtils";
-import { getCurrentDate } from "../../../ultils/dateNowUtils";
 import { fetchStaffData } from "../../../store/Slice/staffSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { path } from "../../../ultils/constant";
 import { callAPINoHead } from "../../../ultils/axiosApi";
-import { formatDate } from "../../../components/MomentDate";
+import { formatDate, formatDateForInput } from "../../../components/MomentDate";
+
 const { Option } = Select;
-const { Item, List } = Form;
+
 const EditForm = ({ onEditData, staff_id }) => {
   const [form] = Form.useForm();
-
   const dispatch = useDispatch();
 
   const getStaffById = (state, staffId) => {
@@ -38,43 +37,29 @@ const EditForm = ({ onEditData, staff_id }) => {
   const staffName = useSelector((state) => getStaffById(state, staff_id));
 
   const [formData, setFormData] = useState({
-    staff_name: staffName ? staffName.staff_name : "",
-    gender: staffName ? staffName.gender : "",
-    birthday: staffName ? formatDate(staffName.birthday) : "",
-    address: staffName ? staffName.address : "",
-    phone_number: staffName ? staffName.phone_number : "",
-    email: staffName ? staffName.email : "",
-    position: staffName ? staffName.position : "",
-    salary: staffName ? staffName.salary : "",
-    start_date: staffName ? formatDate(staffName.start_date) : "",
+    staff_name: "",
+    gender: "",
+    birthday: "",
+    address: "",
+    phone_number: "",
+    email: "",
+    position: "",
+    salary: "",
+    start_date: "",
   });
 
   useEffect(() => {
-    // Kiểm tra nếu staffName có giá trị thì mới set giá trị cho formData
     if (staffName) {
-      setFormData({
-        staff_name: staffName.staff_name,
-        gender: staffName.gender,
-        birthday: formatDate(staffName.birthday),
-        address: staffName.address,
-        phone_number: staffName.phone_number,
-        email: staffName.email,
-        position: staffName.position,
-        salary: staffName.salary,
-        start_date: formatDate(staffName.start_date),
-      });
+      const formattedStaffName = {
+        ...staffName,
+        birthday: formatDateForInput(staffName.birthday),
+        start_date: formatDateForInput(staffName.start_date),
+      };
 
-      // Sử dụng form.setFieldsValue để cập nhật giá trị của input
+      setFormData(formattedStaffName);
+
       form.setFieldsValue({
-        staff_name: staffName.staff_name,
-        gender: staffName.gender,
-        birthday: formatDate(staffName.birthday),
-        address: staffName.address,
-        phone_number: staffName.phone_number,
-        email: staffName.email,
-        position: staffName.position,
-        salary: staffName.salary,
-        start_date: formatDate(staffName.start_date),
+        ...formattedStaffName,
       });
     }
   }, [staffName, form]);
@@ -86,6 +71,7 @@ const EditForm = ({ onEditData, staff_id }) => {
   const onClose = () => {
     onEditData(null);
   };
+
   const resetFormData = () => {
     form.resetFields();
   };
@@ -96,19 +82,17 @@ const EditForm = ({ onEditData, staff_id }) => {
       [key]: value,
     });
   };
+
   const handleSubmit = async () => {
     try {
-      // Gọi hàm callAPI để gửi yêu cầu chỉnh sửa vai trò
       const apiUrl = `${path.API_BASE_URL}${path.STAFF_API_URL}/${staff_id}`;
       console.log(formData);
       await callAPINoHead(apiUrl, "PATCH", formData);
 
-      // Cập nhật dữ liệu trên giao diện sau khi chỉnh sửa thành công nếu cần
       dispatch(fetchStaffData());
       showSuccessNotification("Success", "Update Completed Successfully");
       onClose();
     } catch (error) {
-      // Xử lý lỗi nếu cần
       showFailureNotification("Error", "Failed to update Staff");
       console.error("Failed to edit Staff:", error);
     }
@@ -260,6 +244,7 @@ const EditForm = ({ onEditData, staff_id }) => {
               >
                 <Select
                   placeholder="Please choose the Position"
+                  value={formData.position}
                   onChange={(value) => handleChange("position", value)}
                 >
                   <Option value="Manager">Manager</Option>

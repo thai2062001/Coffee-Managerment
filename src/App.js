@@ -39,6 +39,14 @@ function App() {
           }
         />
         <Route
+          path={path.STATICTICAL_STORAGE}
+          element={
+            <AdminRoute>
+              <StaticticalStorage />
+            </AdminRoute>
+          }
+        />
+        <Route
           path={path.DAILYREPORT}
           element={
             <AdminRoute>
@@ -173,14 +181,6 @@ function App() {
           element={
             <StaffRoute>
               <StaffOrder />
-            </StaffRoute>
-          }
-        />
-        <Route
-          path={path.STATICTICAL_STORAGE}
-          element={
-            <StaffRoute>
-              <StaticticalStorage />
             </StaffRoute>
           }
         />

@@ -55,6 +55,19 @@ const UserSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    fetchUserExistStart(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    fetchUserExistSuccess(state, action) {
+      state.list = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    fetchUserExistFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
     addUser(state, action) {
       state.list.push(action.payload);
     },
@@ -89,12 +102,18 @@ export const {
   fetchUserStart,
   fetchUserFailure,
   addUser,
+  fetchUserExistStart,
+  fetchUserExistFailure,
   deleteUser,
   logoutUser,
 } = UserSlice.actions;
 
 export const fetchUserSuccess = (data) => ({
   type: "FETCH_USER_SUCCESS",
+  payload: data,
+});
+export const fetchUserExistSuccess = (data) => ({
+  type: "FETCH_USER_EXIST_SUCCESS",
   payload: data,
 });
 
@@ -108,6 +127,18 @@ export const fetchUserData = () => async (dispatch) => {
     dispatch(fetchUserSuccess(response));
   } catch (error) {
     dispatch(fetchUserFailure(error.message));
+  }
+};
+export const fetchUserExistData = () => async (dispatch) => {
+  try {
+    dispatch(fetchUserExistStart());
+    const response = await callAPINoHead(
+      path.API_BASE_URL + path.USER_EXIST_API_URL,
+      "GET"
+    );
+    dispatch(fetchUserExistSuccess(response));
+  } catch (error) {
+    dispatch(fetchUserExistFailure(error.message));
   }
 };
 

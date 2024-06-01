@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
-import {
-  Button,
-  Col,
-  Drawer,
-  Form,
-  Input,
-  Upload,
-  Row,
-  Space,
-  Select,
-  DatePicker,
-} from "antd";
+import { Button, Col, Drawer, Form, Input, Row, Space, Select } from "antd";
 import {
   showFailureNotification,
   showSuccessNotification,
@@ -22,21 +11,38 @@ import { fetchStaffData } from "../../../store/Slice/staffSlice";
 import { callAPINoHead, callAPIPost } from "../../../ultils/axiosApi";
 import { path } from "../../../ultils/constant";
 import { useDispatch, useSelector } from "react-redux";
-
-const { Item, List } = Form;
+import { fetchUserExistData } from "../../../store/Slice/UserSlice";
+const { Item } = Form;
 const { Option } = Select;
+
+const passwordValidator = (rule, value) => {
+  if (!value) {
+    return Promise.reject("Please enter a password");
+  }
+  const regex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+  if (!regex.test(value)) {
+    return Promise.reject(
+      "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long."
+    );
+  }
+  return Promise.resolve();
+};
+
 const AddUserForm = ({ onAddData }) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const roleList = useSelector((state) => state.role.roleList);
   const staffList = useSelector((state) => state.staff.staffList);
+  const userExistList = useSelector((state) => state.user.userExistList);
+
   useEffect(() => {
     dispatch(fetchRoleData());
-  }, [dispatch]);
-  useEffect(() => {
+    dispatch(fetchUserExistData());
     dispatch(fetchStaffData());
   }, [dispatch]);
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -44,6 +50,7 @@ const AddUserForm = ({ onAddData }) => {
     role_id: "",
     staff_id: "",
   });
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -56,21 +63,18 @@ const AddUserForm = ({ onAddData }) => {
     form.resetFields();
   };
 
-  const handleAdd = () => {
-    // Kiểm tra từng trường dữ liệu riêng lẻ
-    if (
-      formData.username.trim() !== "" &&
-      formData.password.trim() !== "" &&
-      formData.phone_number.trim() !== "" &&
-      formData.role_id !== "" &&
-      formData.staff_id !== ""
-    ) {
+  const handleAdd = async () => {
+    try {
+      const values = await form.validateFields();
       // Gửi dữ liệu lên server và xử lý kết quả thành công
       onAddData(formData);
       resetFormData();
       onClose();
-    } else {
-      console.log("Vui lòng điền đầy đủ thông tin trước khi thêm.");
+    } catch (errorInfo) {
+      showFailureNotification(
+        "error",
+        "Please fill out all fields and ensure the password is valid."
+      );
     }
   };
 
@@ -80,6 +84,11 @@ const AddUserForm = ({ onAddData }) => {
       [key]: value,
     });
   };
+
+  // Filter staff list based on userExistList
+  const availableStaffList = staffList.filter((staff) =>
+    userExistList.some((user) => user.staff_id === staff.staff_id)
+  );
 
   return (
     <>
@@ -92,7 +101,7 @@ const AddUserForm = ({ onAddData }) => {
         New User
       </Button>
       <Drawer
-        title="Create a new Role"
+        title="Create a new User"
         width={720}
         onClose={onClose}
         visible={open}
@@ -127,7 +136,7 @@ const AddUserForm = ({ onAddData }) => {
               >
                 <Input
                   style={{ width: "100%" }}
-                  placeholder="Please enter new role"
+                  placeholder="Please enter new User"
                   onChange={(e) => handleChangeForm("username", e.target.value)}
                 />
               </Item>
@@ -136,7 +145,10 @@ const AddUserForm = ({ onAddData }) => {
               <Item
                 name="password"
                 label="Password"
-                rules={[{ required: true, message: "Please enter a password" }]}
+                rules={[
+                  { required: true, message: "Please enter a password" },
+                  { validator: passwordValidator },
+                ]}
               >
                 <Input.Password
                   style={{ width: "100%" }}
@@ -192,7 +204,7 @@ const AddUserForm = ({ onAddData }) => {
                   placeholder="Select a staff"
                   onChange={(value) => handleChangeForm("staff_id", value)}
                 >
-                  {staffList.map((staff) => (
+                  {availableStaffList.map((staff) => (
                     <Option key={staff.staff_id} value={staff.staff_id}>
                       {staff.staff_name}
                     </Option>
@@ -206,4 +218,5 @@ const AddUserForm = ({ onAddData }) => {
     </>
   );
 };
+
 export default AddUserForm;

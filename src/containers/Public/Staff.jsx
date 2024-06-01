@@ -116,7 +116,7 @@ const Staff = () => {
 
   const handleAdd = async (data) => {
     // Kiểm tra xem formData có dữ liệu không
-    const access_Token = localStorage.getItem("access-token");
+    const access_Token = localStorage.getItem("accessToken");
     try {
       console.log(data);
       // Gọi API POST để thêm dữ liệu mới
