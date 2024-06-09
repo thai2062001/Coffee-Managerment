@@ -36,7 +36,7 @@ function HeaderLayout() {
             icon={<AiOutlineUserAdd />}
             onClick={LogOut}
           >
-            Đăng xuất
+            Sign Out
           </Button>
         </div>
       </div>
