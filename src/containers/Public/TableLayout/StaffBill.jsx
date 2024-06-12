@@ -9,11 +9,15 @@ import { Breadcrumb, Layout, Menu, theme, Drawer } from "antd";
 import HeaderLayout from "../HeaderLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { path } from "../../../ultils/constant";
-import { showFailureNotification } from "../../../ultils/notificationUtils";
+import {
+  showFailureNotification,
+  showSuccessNotification,
+} from "../../../ultils/notificationUtils";
 import BillTable from "./BillTable";
 import { fetchBillData, addBillData } from "../../../store/Slice/BillSlice";
 import { formatDate } from "../../../components/MomentDate";
 import AddBillForm from "../FormLayout/AddBillForm";
+import { callAPIDelete } from "../../../ultils/axiosApi";
 const { Header, Content, Footer, Sider } = Layout;
 
 const items2 = [
@@ -61,6 +65,18 @@ const StaffBill = () => {
     setDrawerVisible(true); // Open the drawer
   };
 
+  const handleDelete = async (itemId) => {
+    console.log(itemId);
+    try {
+      await callAPIDelete(`http://localhost:5000/bill/${itemId}`);
+      console.log("Bill Item deleted successfully!");
+      const newData = dataSource.filter((item) => item.bill_id !== itemId);
+      setDataSource(newData);
+      showSuccessNotification("Success", " Item deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete item:", error);
+    }
+  };
   const handleAdd = async (data) => {
     console.log("formData:", data);
     try {
@@ -137,10 +153,11 @@ const StaffBill = () => {
             <div className="flex justify-center p-1 ">
               <span className="text-[28px] font-bold ">Bill Staff</span>
             </div>
-            <AddBillForm onAddData={handleAdd} />
+
             <BillTable
               dataSource={dataSource}
               onAdd={handleAdd}
+              onDelete={handleDelete}
               onViewProfile={handleViewProfile}
             />
           </Content>
