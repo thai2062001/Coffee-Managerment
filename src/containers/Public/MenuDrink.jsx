@@ -145,7 +145,7 @@ const MenuDrink = () => {
   // };
   const handleSave = (row) => {
     const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.storage_id);
+    const index = newData.findIndex((item) => row.key === item.menu_id);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,

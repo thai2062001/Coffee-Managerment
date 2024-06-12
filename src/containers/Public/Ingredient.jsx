@@ -108,39 +108,6 @@ const Ingredient = () => {
     setSelectedKeys([key]);
   };
 
-  const handleAdd = async (data) => {
-    console.log("formData:", data);
-    if (data.role_name.trim() !== "") {
-      try {
-        await dispatch(addRoleData(data));
-        console.log("New data added:", data);
-        // Lưu thông báo thành công vào localStorage
-        localStorage.setItem(
-          "successMessage",
-          JSON.stringify({
-            title: "Success",
-            message: "Addition Completed Successfully",
-          })
-        );
-        // Reload trang sau 2 giây
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } catch (error) {
-        console.error("Failed to add new data:", error);
-        showFailureNotification(
-          "Error",
-          "Failed to add new data. Please try again later."
-        );
-      }
-    } else {
-      showFailureNotification(
-        "Error",
-        "Please provide all necessary information before adding"
-      );
-    }
-  };
-
   useEffect(() => {
     setDataSource(ingredientList);
   }, [ingredientList]);
@@ -219,7 +186,6 @@ const Ingredient = () => {
             </div>
             <IngredientTable
               dataSource={dataSource}
-              onAdd={handleAdd}
               onDelete={handleDelete}
               onSave={handleSave}
               onEdit={handleEdit}

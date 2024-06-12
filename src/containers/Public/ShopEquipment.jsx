@@ -112,8 +112,6 @@ const ShopEquipment = () => {
 
   const handleEdit = (role_id) => {
     console.log(role_id);
-    setEditingRoleId(role_id);
-    setIsEditing(true);
   };
 
   const handleDelete = async (itemId) => {};
